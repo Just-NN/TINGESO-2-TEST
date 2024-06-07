@@ -4,7 +4,7 @@ spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/tickets
     username: postgres
-    password: postgres
+    password: default
 eureka:
   instance:
     preferIpAddress: true
