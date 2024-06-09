@@ -11,7 +11,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/vehicle")
-@CrossOrigin(origins = "*")
 public class VehicleController {
 
     @Autowired
@@ -61,4 +60,13 @@ public class VehicleController {
         }
         return ResponseEntity.ok(vehicles);
     }
+    // Get engine type of the vehicle
+    @GetMapping("/engineType/{id}")
+    public ResponseEntity<Integer> getEngineType(@PathVariable Long id){
+
+        int engineType = vehicleService.getEngineType(id);
+        System.out.println("Engine type: " + engineType);
+        return ResponseEntity.ok(engineType);
+    }
+
 }

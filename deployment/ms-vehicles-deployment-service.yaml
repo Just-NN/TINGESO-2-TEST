@@ -1,64 +1,64 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ms-products-deployment
+  name: ms-vehicles-deployment
   labels:
-    app: ms-products-deployment
+    app: ms-vehicles-deployment
 spec:
   selector:
     matchLabels:
-      app: ms-products-deployment
+      app: ms-vehicles-deployment
   replicas: 1
   template:
     metadata:
       labels:
-        app: ms-products-deployment
+        app: ms-vehicles-deployment
     spec:
       containers:
-        - name: ms-products
-          image: polloh/ms-products
+        - name: ms-vehicles
+          image: ivanguajardo13/ms-vehicles-pep2
           ports:
-            - containerPort: 8091
+            - containerPort: 8092
           env:
             - name: SERVER_PORT
-              value: "8091"
+              value: "8092"
             - name: DB_HOST
               valueFrom:
                 configMapKeyRef:
                   name: postgres-config-map
-                  key: DB_HOST_PRODUCTS
+                  key: DB_HOST_VEHICLES
             - name: DB_PORT
               valueFrom:
                 configMapKeyRef:
                   name: postgres-config-map
-                  key: DB_PORT_PRODUCTS
+                  key: DB_PORT_VEHICLES
             - name: DB_DBNAME
               valueFrom:
                 configMapKeyRef:
                   name: postgres-config-map
-                  key: DB_DBNAME_PRODUCTS
+                  key: DB_DBNAME_VEHICLES
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: DB_USER_PRODUCTS
+                  key: DB_USER_VEHICLES
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: DB_PASSWORD_PRODUCTS
+                  key: DB_PASSWORD_VEHICLES
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: ms-products-service
+  name: ms-vehicles-service
   labels:
-    app: ms-products-service
+    app: ms-vehicles-service
 spec:
   selector:
-    app: ms-products-deployment
+    app: ms-vehicles-deployment
   ports:
     - protocol: TCP
-      port: 8091
-      targetPort: 8091
+      port: 8092
+      targetPort: 8092
   type: LoadBalancer

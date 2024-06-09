@@ -42,4 +42,15 @@ public class VehicleService {
         List<VehicleEntity> vehicles = vehicleRepository.findAll();
         return vehicles != null ? vehicles : Collections.emptyList();
     }
+    // Get engine type of the vehicle
+    public int getEngineType(Long id){
+        VehicleEntity vehicle = vehicleRepository.findById(id).orElse(null);
+        System.out.println("Vehicle: " + vehicle);
+        if (vehicle == null){
+            System.out.println("Vehicle not found");
+            return -1;
+        }
+            return vehicle.getEngineType();
+    }
+
 }

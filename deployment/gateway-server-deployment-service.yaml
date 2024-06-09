@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: gateway-server
-          image: polloh/gateway-server
+          image: ivanguajardo13/gateway-server-pep2
           ports:
             - containerPort: 8080
 ---

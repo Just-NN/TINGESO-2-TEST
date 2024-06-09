@@ -1,0 +1,160 @@
+/* theme.css */
+
+body {
+    background-color: #1a1a1a; /* Dark grey background */
+    color: #f5f5f5; /* Light grey text color */
+}
+
+a {
+    color: #f5f5f5; /* Light grey link color */
+}
+
+a:hover {
+    color: #bbbbbb; /* Medium grey link color on hover */
+}
+
+.navbar {
+    background-color: #333; /* Darker grey background for navbar */
+    color: #f5f5f5; /* Light grey text color */
+    border-radius: 10vh;
+    width: 100%;
+
+}
+
+.navbar a {
+    color: #020202; /* Light grey link color */
+
+}
+
+.navbar a:hover {
+    color: #ff0000; /* Medium grey link color on hover */
+}
+
+.navbar .navbar-brand {
+    color: #4CAF50; /* Green color for the brand */
+    padding-left: 3vh;
+}
+
+.navbar .navbar-brand:hover {
+    color: #3e8e41; /* Dark green color for the brand on hover */
+}
+
+.navbar .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='%23fff' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 0.5)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e"); /* White hamburger icon */
+}
+.op-button{
+    border-radius: 10vh;
+}
+
+.repair-table {
+    width: 100%;
+    border-collapse: collapse;
+    overflow: auto;
+}
+
+.repair-table th, .repair-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.repair-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.repair-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+.option-body{
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+}
+
+.titulo{
+    border: 3vh;
+    padding: 3vh;
+}
+.reload-button{
+    border-radius: 10vh;
+    background-color: #4CAF50;
+    color: #f5f5f5;
+    padding: 2vh;
+    margin: 1vh;
+    font-weight: bolder;
+}
+
+.card {
+    background-color: #f1f1f1;
+    width: 80%;
+    margin: 0 auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+.card-title {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+}
+
+.repair-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.repair-table th, .repair-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.repair-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.repair-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.report-table th, .report-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.report-table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.report-table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #4CAF50;
+    color: white;
+}
+.update-button {
+    border-radius: 1000vh;
+    background-color: #4CAF50; /* Green background */
+    color: #f5f5f5; /* Light grey text color */
+    padding: 2vh;
+    margin: 1vh;
+    font-weight: bolder;
+    transition: background-color 0.3s ease; /* Smooth transition */
+}
+
+.update-button:hover {
+    background-color: #3e8e41; /* Dark green background on hover */
+}

@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: eureka-server
-          image: polloh/eureka-server
+          image: ivanguajardo13/eureka-server-pep2
           ports:
             - containerPort: 8761
 ---

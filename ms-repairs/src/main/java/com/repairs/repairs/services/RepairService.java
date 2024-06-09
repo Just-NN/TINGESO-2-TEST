@@ -66,6 +66,7 @@ public class RepairService {
 
     // Get all repairs by ticket
     public List<RepairEntity> getRepairsByTicket(Long idTicket){
+        System.out.println("ESTOY BUSCANDO POR TICKET XD");
         return repairRepository.findRepairsByIdTicket(idTicket);
     }
 
@@ -76,40 +77,78 @@ public class RepairService {
     // The calculations are the same for all
 
 
-    //    kmSurcharge;
+    // Assuming you have an instance of RepairRepository named repairRepository
+
+    // kmSurcharge;
     public int calculateKMSurcharge(RepairEntity repair, double percentage){
-        return (int) (repair.getKmSurcharge() * percentage);
+        System.out.println("Calculating km surcharge...");
+        int kmSurcharge = (int) (repair.getBasePrice() * percentage);
+        System.out.println(kmSurcharge);
+        repair.setKmSurcharge(kmSurcharge);
+        repairRepository.save(repair);
+        return kmSurcharge;
     }
-    //    ageSurcharge;
+
+    // ageSurcharge;
     public int calculateAgeSurcharge(RepairEntity repair, double percentage){
-        return (int) (repair.getAgeSurcharge() * percentage);
+        int ageSurcharge = (int) (repair.getBasePrice() * percentage);
+        repair.setAgeSurcharge(ageSurcharge);
+        repairRepository.save(repair);
+        return ageSurcharge;
     }
-    //    delaySurcharge;
+
+    // delaySurcharge;
     public int calculateDelaySurcharge(RepairEntity repair, double percentage){
-        return (int) (repair.getDelaySurcharge() * percentage);
+        int delaySurcharge = (int) (repair.getBasePrice() * percentage);
+        repair.setDelaySurcharge(delaySurcharge);
+        repairRepository.save(repair);
+        return delaySurcharge;
     }
-    //    dayDiscount;
+
+    // dayDiscount;
     public int calculateDayDiscount(RepairEntity repair, double percentage){
-        return (int) (repair.getDayDiscount() * percentage);
+        int dayDiscount = (int) (repair.getBasePrice() * percentage);
+        repair.setDayDiscount(dayDiscount);
+        repairRepository.save(repair);
+        return dayDiscount;
     }
-    //    repairsDiscount;
+
+    // repairsDiscount;
     public int calculateRepairsDiscount(RepairEntity repair, double percentage){
-        return (int) (repair.getRepairsDiscount() * percentage);
+        int repairsDiscount = (int) (repair.getBasePrice() * percentage);
+        repair.setRepairsDiscount(repairsDiscount);
+        repairRepository.save(repair);
+        return repairsDiscount;
     }
-    //    totalPrice;
+
+    // totalPrice;
     public int calculateTotalPrice(RepairEntity repair){
         // The total price is the sum of the base price and the surcharges minus the discounts
-        return repair.getBasePrice() + repair.getKmSurcharge() + repair.getAgeSurcharge() + repair.getDelaySurcharge() - repair.getDayDiscount() - repair.getRepairsDiscount();
+        int totalPrice = repair.getBasePrice() + repair.getKmSurcharge() + repair.getAgeSurcharge() + repair.getDelaySurcharge() - repair.getDayDiscount() - repair.getRepairsDiscount();
+        repair.setTotalPrice(totalPrice);
+        repairRepository.save(repair);
+        return totalPrice;
+    }
+
+    public int calculateDiscountByDay(RepairEntity repair){
+        int discountByDay = repair.getBasePrice() * (repair.getDayDiscount());
+        repair.setDayDiscount(discountByDay);
+        repairRepository.save(repair);
+        return discountByDay;
     }
 
     //    basePrice;
     public int calculateBasePrice(RepairEntity repair, int engineType){
+        System.out.println("Calculating base price...");
         if (repair == null) {
+            System.out.println("Repair is null");
             return -1;
         }
         int repairType = repair.getRepairType();
 
-        // Define a 2D array to store the repair costs
+        System.out.println("Repair type: " + repairType);
+        System.out.println("Engine type: " + engineType);
+
         int[][] repairCosts = {
                 {120000, 130000, 350000, 210000, 150000, 100000, 80000, 180000, 150000, 130000, 80000}, // Gasoline
                 {120000, 130000, 450000, 210000, 150000, 120000, 80000, 180000, 150000, 140000, 80000}, // Diesel
@@ -117,7 +156,8 @@ public class RepairService {
                 {220000, 230000, 800000, 300000, 250000, 0, 100000, 250000, 180000, 0, 80000} // Electric
         };
 
-        int basePrice = -1;
+        int basePrice = 0;
+
         // Check if the repairType and engineType are within the valid range
         if (repairType >= 1 && repairType <= 11 && engineType >= 0 && engineType <= 3) {
             System.out.printf("Repair type: %d\n", repairType);
@@ -128,6 +168,7 @@ public class RepairService {
         }
 
         // Save the base price in the RepairEntity
+        System.out.println("Base price: " + basePrice);
         repair.setBasePrice(basePrice);
         repairRepository.save(repair);
         return basePrice;

@@ -1,18 +1,14 @@
 package com.tickets.tickets.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+@Getter
+@Setter
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-
 public class Vehicle {
-    // license plate
     private Long licensePlate;
-
-    // These values are important to calculate surcharges and discounts
     private String brand;
     private String model;
     private int vehicleType;

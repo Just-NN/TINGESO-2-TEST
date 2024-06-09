@@ -5,7 +5,7 @@ eureka:
     fetch-registry: true
     register-with-eureka: true
     service-url:
-      defaultZone: http://localhost:8761/eureka/
+      defaultZone: http://eureka-server-service:8761/eureka/
 spring:
   cloud:
     gateway:
@@ -17,9 +17,9 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: '*'
-            allowedMethods: "*"
-            allowedHeaders: "*"
+            allowedOrigins: "http://localhost:3000"
+            allowedMethods: "http://localhost:3000"
+            allowedHeaders: "http://localhost:3000"
       routes:
         - id: ms-tickets
           uri: lb://ms-tickets

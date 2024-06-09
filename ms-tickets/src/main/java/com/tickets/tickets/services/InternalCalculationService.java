@@ -7,7 +7,11 @@ import com.tickets.tickets.models.Repair;
 import com.tickets.tickets.models.Vehicle;
 import com.tickets.tickets.repositories.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -24,10 +28,19 @@ public class InternalCalculationService {
     @Autowired
     private TicketRepository ticketRepository;
 
-    private VehicleFeignClient vehicleFeignClient;
+    RepairFeignClient repairFeignClient;
+    VehicleFeignClient vehicleFeignClient;
 
-    private RepairFeignClient repairFeignClient;
-
+    @Autowired
+    public InternalCalculationService(TicketRepository ticketRepository,
+                         RepairFeignClient repairFeignClient,
+                         VehicleFeignClient vehicleFeignClient) {
+        this.ticketRepository = ticketRepository;
+        this.repairFeignClient = repairFeignClient;
+        this.vehicleFeignClient = vehicleFeignClient;
+    }
+    @Autowired
+    RestTemplate restTemplate;
 
 
     // This is the service that will calculate the final price for the repair
@@ -43,10 +56,11 @@ public class InternalCalculationService {
         // Get the license plate from the ticket
         Long licensePlate = ticket.getLicensePlate();
 
-        Vehicle vehicle = vehicleFeignClient.getVehicleById(licensePlate);
+        Vehicle vehicle = restTemplate.getForObject("http://localhost:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
         if (vehicle == null) {
             return -1;
         }
+        System.out.println("||||||Vehicle|||||||: " + vehicle);
         int engineType = vehicle.getEngineType();
         double surchargeKM = 0;
         int mileage = vehicle.getMileage();
@@ -81,55 +95,56 @@ public class InternalCalculationService {
         }
 
         // Save the surcharge in the RepairEntity
+        System.out.println("Surcharge: " + surchargeKM);
         ticket.setSurchargeForKM(surchargeKM);
         ticketRepository.save(ticket);
         return surchargeKM;
     }
     public double calculateSurchargeByAge(TicketEntity ticket){
-        {
-            if (ticket == null) {
-                return -1;
-            }
-            Long licensePlate = ticket.getLicensePlate();
-            Vehicle vehicle = vehicleFeignClient.getVehicleById(licensePlate);
-            if (vehicle == null) {
-                return -1;
-            }
-            int engineType = vehicle.getEngineType();
-            double ageSurcharge = 0;
-            int age = Calendar.getInstance().get(Calendar.YEAR) - vehicle.getYear();
-            int type = vehicle.getVehicleType();
-
-            // Define a 2D array to store the surcharge rates
-            double[][] surchargeRates = {
-                    {0.05, 0.09, 0.15}, // Sedan/Hatchback
-                    {0.05, 0.09, 0.15}, // Sedan/Hatchback
-                    {0.07, 0.11, 0.2},  // SUV/Pickup/Van
-                    {0.07, 0.11, 0.2},  // SUV/Pickup/Van
-                    {0.07, 0.11, 0.2}   // SUV/Pickup/Van
-            };
-
-            if (age < 0) {
-                ageSurcharge = -1;
-            } else if (age > 5) {
-                int ageIndex;
-                if (age < 10) {
-                    ageIndex = 0;
-                } else if (age < 15) {
-                    ageIndex = 1;
-                } else {
-                    ageIndex = 2;
-                }
-
-                // Calculate the surcharge rate from the array
-                ageSurcharge = surchargeRates[type][ageIndex];
-            }
-
-            // Save the surcharge in the RepairEntity
-            ticket.setSurchargeForAge(ageSurcharge);
-            ticketRepository.save(ticket);
-            return ageSurcharge;
+        if (ticket == null) {
+            return -1;
         }
+        Long licensePlate = ticket.getLicensePlate();
+        Vehicle vehicle = restTemplate.getForObject("http://localhost:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
+        System.out.println("-----------------------");
+        System.out.println("Vehicle: " + vehicle);
+        if (vehicle == null) {
+            return -1;
+        }
+        int engineType = vehicle.getEngineType();
+        double ageSurcharge = 0;
+        int age = Calendar.getInstance().get(Calendar.YEAR) - vehicle.getYear();
+        int type = vehicle.getVehicleType();
+
+        // Define a 2D array to store the surcharge rates
+        double[][] surchargeRates = {
+                {0.05, 0.09, 0.15}, // Sedan/Hatchback
+                {0.05, 0.09, 0.15}, // Sedan/Hatchback
+                {0.07, 0.11, 0.2},  // SUV/Pickup/Van
+                {0.07, 0.11, 0.2},  // SUV/Pickup/Van
+                {0.07, 0.11, 0.2}   // SUV/Pickup/Van
+        };
+
+        if (age < 0) {
+            ageSurcharge = -1;
+        } else if (age > 5) {
+            int ageIndex;
+            if (age < 10) {
+                ageIndex = 0;
+            } else if (age < 15) {
+                ageIndex = 1;
+            } else {
+                ageIndex = 2;
+            }
+
+            // Calculate the surcharge rate from the array
+            ageSurcharge = surchargeRates[type][ageIndex];
+        }
+
+        // Save the surcharge in the RepairEntity
+        ticket.setSurchargeForAge(ageSurcharge);
+        ticketRepository.save(ticket);
+        return ageSurcharge;
     }
     // Calculate the surcharge for the delay
 
@@ -145,35 +160,45 @@ public class InternalCalculationService {
         DecimalFormatSymbols dfs = new DecimalFormatSymbols();
         dfs.setDecimalSeparator('.');
         df.setDecimalFormatSymbols(dfs);
-        double delaySurcharge = Double.valueOf(df.format(-(delay)*0.05));
-        System.out.println("Delay: " + delaySurcharge);
+        double delaySurcharge = -Double.valueOf(df.format(-(delay)*0.05));
+        System.out.println("Delay xx: " + delaySurcharge);
         // Save the surcharge in the TicketEntity
         ticket.setSurchargeForDelay(delaySurcharge);
         ticketRepository.save(ticket);
         return delaySurcharge;
     }
-    // Calculate the number of repairs this year
+
     public int calculateRepairsThisYear(TicketEntity ticket){
         if (ticket == null) {
+            System.out.println("Error en el ticket este ano");
             return -1;
         }
         Long licensePlate = ticket.getLicensePlate();
         // get all the tickets this 12 months using findTicketsByVehicleThisYear
         List<TicketEntity> tickets = ticketRepository.findTicketsByVehicleThisYear(licensePlate, ticket.getEntryDate());
         if (tickets == null) {
+            System.out.println("Error en la lista de tickets");
             return -1;
         }
         int repairQuantity = 0;
         // Now we must count the number of repairs using a for on tickets
         for (TicketEntity t : tickets) {
-            List<Repair> repairs = repairFeignClient.getRepairsByTicket(t.getIdTicket());
+            System.out.println("Ticket: " + t);
+            System.out.println("VOY A PROBAR SUERTE");
+            ResponseEntity<List<Repair>> response = restTemplate.exchange(
+                    "http://localhost:8080/api/v1/repair/byticket/" + t.getIdTicket(),
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<List<Repair>>() {}
+            );
+            List<Repair> repairs = response.getBody();
             if (repairs == null) {
                 return -1;
             }
             // get the size of the list and add it to repairQuantity
             repairQuantity += repairs.size();
         }
-        return tickets.size();
+        return repairQuantity;
     }
 
     // Calculate the discount by the number of repairs
@@ -182,8 +207,7 @@ public class InternalCalculationService {
             return -1;
         }
         Long licensePlate = ticket.getLicensePlate();
-        // MUST change the query for a ms getter
-        Vehicle vehicle = vehicleFeignClient.getVehicleById(licensePlate);
+        Vehicle vehicle = restTemplate.getForObject("http://localhost:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
         System.out.println("Vehicle: " + vehicle);
         if (vehicle == null) {
             return -1;
@@ -214,15 +238,12 @@ public class InternalCalculationService {
 
             // Calculate the discount rate from the array
             discount = discountRates[engineType][repairIndex];
-            System.out.println("Discount: " + discount);
+            System.out.println("Discount KM: " + discount);
         }
 
         // Save the discount in the RepairEntity
-        ticket.setDiscountForRepairs(discount);
-        ticketRepository.save(ticket);
         return discount;
     }
-
     // Calculate the discount by the day of the week
 
     public double calculateDiscountByDay(TicketEntity ticket){
@@ -231,6 +252,7 @@ public class InternalCalculationService {
         }
         ZonedDateTime entryDateTime = ticket.getEntryDate().toInstant().atZone(ZoneId.systemDefault());
         int entryDay = entryDateTime.getDayOfWeek().getValue();
+        System.out.println("Ticket id: "+ ticket.getIdTicket());
         System.out.println("Day: " + entryDay);
         int entryHour = entryDateTime.getHour();
         System.out.println("Hour: " + entryHour);
@@ -239,7 +261,7 @@ public class InternalCalculationService {
             System.out.println("Es buen dia");
             if (entryHour >= 9 && entryHour <= 12){
                 System.out.println("Es buen horario");
-                dayDiscount = 0.1;
+                dayDiscount = 0.2; // 20% discount
             }
         }
 
@@ -249,7 +271,6 @@ public class InternalCalculationService {
         return dayDiscount;
     }
 
-    // Calculate the total price for the ticket
     public double calculateTotalPrice(TicketEntity ticket){
         if (ticket == null) {
             return -1;
@@ -260,11 +281,24 @@ public class InternalCalculationService {
         double repairDiscount = ticket.getDiscountForRepairs();
         double dayDiscount = ticket.getDiscountPerDay();
         double finalPrice = 0;
+        System.out.println("---------------------");
+        System.out.println("Ticket: " + ticket.getIdTicket());
+        System.out.println("KM: " + kmSurcharge);
+        System.out.println("Age: " + ageSurcharge);
+        System.out.println("Repairs: " + repairDiscount);
+        System.out.println("Day: " + dayDiscount);
+        System.out.println("Delay: " + delaySurcharge);
+        System.out.println("Base: " + ticket.getBasePrice());
+        System.out.println("---------------------");
         if (kmSurcharge < 0 || ageSurcharge < 0 || repairDiscount < 0){
+            System.out.println("Error en los datos");
+            System.out.println("KM: " + kmSurcharge);
+            System.out.println("Age: " + ageSurcharge);
+            System.out.println("Repairs: " + repairDiscount);
             return -1;
         }
         else{
-            finalPrice = (ticket.getBasePrice() + (kmSurcharge + ageSurcharge + delaySurcharge) - (repairDiscount + dayDiscount))*1.19;
+            finalPrice = (ticket.getBasePrice()*((kmSurcharge + ageSurcharge + delaySurcharge - dayDiscount)) - repairDiscount) *1.19;
         }
         return finalPrice;
     }

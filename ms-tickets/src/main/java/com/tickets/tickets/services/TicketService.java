@@ -1,7 +1,6 @@
 package com.tickets.tickets.services;
 
-import com.tickets.tickets.clients.RepairFeignClient;
-import com.tickets.tickets.clients.VehicleFeignClient;
+import com.tickets.tickets.auxClass.BasePriceRequest;
 import com.tickets.tickets.entities.TicketEntity;
 import com.tickets.tickets.models.Repair;
 import com.tickets.tickets.models.Vehicle;
@@ -11,13 +10,10 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-
+import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class TicketService {
@@ -27,8 +23,9 @@ public class TicketService {
     @Autowired
     private InternalCalculationService internalCalculationService;
 
-    RepairFeignClient repairFeignClient;
-    VehicleFeignClient vehicleFeignClient;
+
+    @Autowired
+    RestTemplate restTemplate;
 
 
     // Basic CRUD operations
@@ -82,22 +79,39 @@ public class TicketService {
         System.out.println("Ticket ID: " + ticketId);
 
         // Use ParameterizedTypeReference for type safety and RestTemplate.exchange for the GET request
-        List<Repair> repairs = repairFeignClient.getRepairsByTicket(ticketId);
+        System.out.println("ESTOY HACIENDO LA REQUEST");
+        ResponseEntity<List<Repair>> response = restTemplate.exchange(
+                "http://localhost:8080/api/v1/repair/byticket/" + ticketId,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Repair>>() {}
+        );
+        List<Repair> repairs = response.getBody();
+        System.out.println("ESTA ES LA LICENCIA: "+ ticket.getLicensePlate());
+        int engineType = restTemplate.getForObject("http://localhost:8080/api/v1/vehicle/engineType/" + ticket.getLicensePlate(), Integer.class);
+        System.out.println("Engine type: " + engineType);
         System.out.println("Repairs: " + repairs.size());
 
         double totalBasePrice = 0;
 
         for (Repair repair : repairs) {
+            System.out.println("--------------------");
+            System.out.println("Engine type: " + engineType);
             System.out.println("Repair: " + repair.toString());
-            repairFeignClient.setBasePrice(repair);
+            BasePriceRequest basePriceRequest = new BasePriceRequest();
+            basePriceRequest.setRepair(repair);
+            basePriceRequest.setEngineType(engineType);
+            System.out.println("Base price request: " + basePriceRequest.getEngineType());
+            System.out.println("Base price request: " + basePriceRequest.getRepair());
+            restTemplate.put("http://localhost:8080/api/v1/repair/setBasePrice", basePriceRequest);
             // Fetch the updated Repair object
-            if (repair == null) {
-                // Handle the case where repair is null
-                System.out.println("Repair is null");
-                return null;
-            }
-            // restTemplate.getForObject("http://localhost:8093/api/v1/repair/" + repair.getIdRepair(), Repair.class);
-            Repair updatedRepair = repairFeignClient.getRepairById(repair.getIdRepair());
+            ResponseEntity<Repair> updatedRepairResponse = restTemplate.exchange(
+                    "http://localhost:8080/api/v1/repair/" + repair.getIdRepair(),
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<Repair>() {}
+            );
+            Repair updatedRepair = updatedRepairResponse.getBody();
             System.out.println("Updated repair: " + updatedRepair.toString());
             totalBasePrice += updatedRepair.getBasePrice();
         }
@@ -106,79 +120,62 @@ public class TicketService {
         return ticketRepository.save(ticket);
     }
 
+
     public TicketEntity saveKMSurcharge(TicketEntity ticket){
         if (ticket == null) {
-            // Handle the case where ticket is null
             return null;
         }
 
         Long ticketId = ticket.getIdTicket();
-        System.out.println("Ticket ID: " + ticketId);
-
         Double percentageKMSurcharge = internalCalculationService.calculateSurchargeForKM(ticket);
 
-//        ResponseEntity<List<Repair>> response = restTemplate.exchange(
-//                "http://localhost:8093/api/v1/repair/byticket/" + ticketId,
-//                HttpMethod.GET,
-//                null,
-//                new ParameterizedTypeReference<List<Repair>>() {}
-//        );
-        //List<Repair> repairs = response.getBody();
-        List<Repair> repairs = repairFeignClient.getRepairsByTicket(ticketId);
-        System.out.println("Repairs: " + repairs.size());
+        ResponseEntity<List<Repair>> response = restTemplate.exchange(
+                "http://localhost:8080/api/v1/repair/byticket/" + ticketId,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Repair>>() {}
+        );
+        List<Repair> repairs = response.getBody();
 
         double totalKMSurcharge = 0;
 
         for (Repair repair : repairs) {
-//            restTemplate.put("http://localhost:8093/api/v1/repair/calculateKMSurcharge/" + percentageKMSurcharge, repair);
-            repairFeignClient.calculateKMSurcharge(repair, percentageKMSurcharge);
-            // Fetch the updated Repair object
-//            Repair updatedRepair = restTemplate.getForObject("http://localhost:8093/api/v1/repair/byticket/" + repair.getIdRepair(), Repair.class);
-            Repair updatedRepair = repairFeignClient.getRepairById(repair.getIdRepair());
+            restTemplate.put("http://localhost:8080/api/v1/repair/calculateKMSurcharge/" + percentageKMSurcharge, repair);
+            Repair updatedRepair = restTemplate.getForObject("http://localhost:8080/api/v1/repair/" + repair.getIdRepair(), Repair.class);
             int kmSurcharge = updatedRepair.getKmSurcharge();
-            System.out.println("KM surcharge: " + kmSurcharge);
             totalKMSurcharge += kmSurcharge;
         }
 
-        ticket.setSurchargeForKM((int) Math.round(totalKMSurcharge * ticket.getBasePrice()));
+        System.out.println("KMSurcharge ANTES DE GUARDAR: " + ticket.getSurchargeForKM());
         return ticketRepository.save(ticket);
     }
 
     public TicketEntity saveAgeSurcharge(TicketEntity ticket){
         if (ticket == null) {
-            // Handle the case where ticket is null
             return null;
         }
 
         Long ticketId = ticket.getIdTicket();
-        System.out.println("Ticket ID: " + ticketId);
-
-        // Use ParameterizedTypeReference for type safety and RestTemplate.exchange for the GET request
-//        ResponseEntity<List<Repair>> response = restTemplate.exchange(
-//                "http://localhost:8093/api/v1/repair/byticket/" + ticketId,
-//                HttpMethod.GET,
-//                null,
-//                new ParameterizedTypeReference<List<Repair>>() {}
-//        );
-//        List<Repair> repairs = response.getBody();
-        List<Repair> repairs = repairFeignClient.getRepairsByTicket(ticketId);
-        System.out.println("Repairs: " + repairs.size());
-
         double percentageAgeSurcharge = internalCalculationService.calculateSurchargeByAge(ticket);
+
+        ResponseEntity<List<Repair>> response = restTemplate.exchange(
+                "http://localhost:8080/api/v1/repair/byticket/" + ticketId,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Repair>>() {}
+        );
+        List<Repair> repairs = response.getBody();
+
         int totalAgeSurcharge = 0;
 
         for (Repair repair : repairs) {
-//            restTemplate.put("http://localhost:8093/api/v1/repair/calculateKMSurcharge/" + percentageAgeSurcharge, repair);
-//            // Fetch the updated Repair object
-//            Repair updatedRepair = restTemplate.getForObject("http://localhost:8093/api/v1/repair/byticket/" + repair.getIdRepair(), Repair.class);
-            repairFeignClient.calculateAgeSurcharge(repair, percentageAgeSurcharge);
-            Repair updatedRepair = repairFeignClient.getRepairById(repair.getIdRepair());
+            restTemplate.put("http://localhost:8080/api/v1/repair/calculateAgeSurcharge/" + percentageAgeSurcharge, repair);
+            Repair updatedRepair = restTemplate.getForObject("http://localhost:8080/api/v1/repair/" + repair.getIdRepair(), Repair.class);
             int ageSurcharge = updatedRepair.getAgeSurcharge();
-            System.out.println("Age surcharge: " + ageSurcharge);
-            totalAgeSurcharge = ageSurcharge;
+            totalAgeSurcharge += ageSurcharge;
         }
 
-        ticket.setSurchargeForAge((int) Math.round(totalAgeSurcharge * ticket.getBasePrice()));
+        ticket.setSurchargeForAge(percentageAgeSurcharge);
         return ticketRepository.save(ticket);
     }
 
@@ -189,141 +186,128 @@ public class TicketService {
         }
 
         Long ticketId = ticket.getIdTicket();
-        System.out.println("Ticket ID: " + ticketId);
+        System.out.println("Ticket ID xx: " + ticketId);
 
         // Use ParameterizedTypeReference for type safety and RestTemplate.exchange for the GET request
-//        ResponseEntity<List<Repair>> response = restTemplate.exchange(
-//                "http://localhost:8093/api/v1/repair/byticket/" + ticketId,
-//                HttpMethod.GET,
-//                null,
-//                new ParameterizedTypeReference<List<Repair>>() {}
-//        );
-//        List<Repair> repairs = response.getBody();
-        List<Repair> repairs = repairFeignClient.getRepairsByTicket(ticketId);
+        ResponseEntity<List<Repair>> response = restTemplate.exchange(
+                "http://localhost:8080/api/v1/repair/byticket/" + ticketId,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Repair>>() {}
+        );
+        List<Repair> repairs = response.getBody();
+
         System.out.println("Repairs: " + repairs.size());
 
         double percentageDelaySurcharge = internalCalculationService.calculateSurchargeForDelay(ticket);
+        System.out.println("HASTA ACÁ FUNCIONA BIEN");
         int totalDelaySurcharge = 0;
 
         for (Repair repair : repairs) {
-//            restTemplate.put("http://localhost:8093/api/v1/repair/calculateKMSurcharge/" + percentageDelaySurcharge, repair);
-            repairFeignClient.calculateDelaySurcharge(repair, percentageDelaySurcharge);
+            System.out.println("REPAIR: " + repair.toString());
+            System.out.println("ENTRÓ AL FOR");
+            restTemplate.put("http://localhost:8080/api/v1/repair/calculateDelaySurcharge/" + percentageDelaySurcharge, repair);
             // Fetch the updated Repair object
-//            Repair updatedRepair = restTemplate.getForObject("http://localhost:8093/api/v1/repair/byticket/" + repair.getIdRepair(), Repair.class);
-            Repair updatedRepair = repairFeignClient.getRepairById(repair.getIdRepair());
+            System.out.println("PASÓ EL PUT");
+            ResponseEntity<Repair> updatedRepairResponse = restTemplate.exchange(
+                                "http://localhost:8080/api/v1/repair/" + repair.getIdRepair(),
+                                HttpMethod.GET,
+                                null,
+                                new ParameterizedTypeReference<Repair>() {}
+                        );
+            Repair updatedRepair = updatedRepairResponse.getBody();
+            System.out.println("PASÓ LA SOLICITUD");
             int delaySurcharge = updatedRepair.getDelaySurcharge();
             System.out.println("Delay surcharge: " + delaySurcharge);
             totalDelaySurcharge = delaySurcharge;
         }
 
-        ticket.setSurchargeForDelay((int) Math.round(totalDelaySurcharge * ticket.getBasePrice()));
+        System.out.println("PASÓ EL FOR");
+        ticket.setSurchargeForDelay(percentageDelaySurcharge);
         return ticketRepository.save(ticket);
     }
 
+
     public TicketEntity saveDiscountByRepairs(TicketEntity ticket){
         if (ticket == null) {
-            // Handle the case where ticket is null
             return null;
         }
 
         Long ticketId = ticket.getIdTicket();
-        System.out.println("Ticket ID: " + ticketId);
-
-        // Use ParameterizedTypeReference for type safety and RestTemplate.exchange for the GET request
-//        ResponseEntity<List<Repair>> response = restTemplate.exchange(
-//                "http://localhost:8093/api/v1/repair/byticket/" + ticketId,
-//                HttpMethod.GET,
-//                null,
-//                new ParameterizedTypeReference<List<Repair>>() {}
-//        );
-//        List<Repair> repairs = response.getBody();
-        List<Repair> repairs = repairFeignClient.getRepairsByTicket(ticketId);
-        System.out.println("Repairs: " + repairs.size());
+        ResponseEntity<List<Repair>> response = restTemplate.exchange(
+                "http://localhost:8080/api/v1/repair/byticket/" + ticketId,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Repair>>() {}
+        );
+        List<Repair> repairs = response.getBody();
 
         double totalDiscountByRepairs = 0;
 
-        for (Repair repair : repairs) {
-//            restTemplate.put("http://localhost:8093/api/v1/repair/calculateDiscountByRepairs", repair);
-            repairFeignClient.calculateRepairsDiscount(repair, 0.1);
-            // Fetch the updated Repair object
-//            Repair updatedRepair = restTemplate.getForObject("http://localhost:8093/api/v1/repair/byticket/" + repair.getIdRepair(), Repair.class);
-            Repair updatedRepair = repairFeignClient.getRepairById(repair.getIdRepair());
-            double discountByRepairs = updatedRepair.getRepairsDiscount();
-            System.out.println("Discount by repairs: " + discountByRepairs);
-            totalDiscountByRepairs += discountByRepairs;
-        }
-
-        ticket.setDiscountForRepairs((int) Math.round(totalDiscountByRepairs * ticket.getBasePrice()));
+        double discountByRepair = internalCalculationService.calculateDiscountByRepairs(ticket);
+        ticket.setDiscountForRepairs((int) Math.round(discountByRepair * ticket.getBasePrice()));
         return ticketRepository.save(ticket);
+
     }
 
     public TicketEntity saveDiscountByDay(TicketEntity ticket){
         if (ticket == null) {
-            // Handle the case where ticket is null
             return null;
         }
 
         Long ticketId = ticket.getIdTicket();
-        System.out.println("Ticket ID: " + ticketId);
-
-        // Use ParameterizedTypeReference for type safety and RestTemplate.exchange for the GET request
-//        ResponseEntity<List<Repair>> response = restTemplate.exchange(
-//                "http://localhost:8093/api/v1/repair/byticket/" + ticketId,
-//                HttpMethod.GET,
-//                null,
-//                new ParameterizedTypeReference<List<Repair>>() {}
-//        );
-//        List<Repair> repairs = response.getBody();
-        List<Repair> repairs = repairFeignClient.getRepairsByTicket(ticketId);
-        System.out.println("Repairs: " + repairs.size());
+        ResponseEntity<List<Repair>> response = restTemplate.exchange(
+                "http://localhost:8080/api/v1/repair/byticket/" + ticketId,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Repair>>() {}
+        );
+        List<Repair> repairs = response.getBody();
 
         double totalDiscountByDay = 0;
+        double discountByDay = internalCalculationService.calculateDiscountByDay(ticket);
 
         for (Repair repair : repairs) {
-//            restTemplate.put("http://localhost:8093/api/v1/repair/calculateDiscountByDay", repair);
-            repairFeignClient.calculateDayDiscount(repair, 0.1);
-            // Fetch the updated Repair object
-//            Repair updatedRepair = restTemplate.getForObject("http://localhost:8093/api/v1/repair/byticket/" + repair.getIdRepair(), Repair.class);
-            Repair updatedRepair = repairFeignClient.getRepairById(repair.getIdRepair());
-            double discountByDay = updatedRepair.getDayDiscount();
-            System.out.println("Discount by day: " + discountByDay);
-            totalDiscountByDay += discountByDay;
+            restTemplate.put("http://localhost:8080/api/v1/repair/calculateDiscountByDay", repair);
+            Repair updatedRepair = restTemplate.getForObject("http://localhost:8080/api/v1/repair/" + repair.getIdRepair(), Repair.class);
+            if (updatedRepair != null) {
+                totalDiscountByDay += updatedRepair.getDayDiscount();
+            }
         }
 
-        ticket.setDiscountPerDay((int) Math.round(totalDiscountByDay * ticket.getBasePrice()));
+        ticket.setDiscountPerDay(discountByDay);
         return ticketRepository.save(ticket);
     }
 
-
-
-    // Total price
     public TicketEntity saveTotalPrice(TicketEntity ticket){
         if (ticket == null) {
-            // Handle the case where ticket is null
             return null;
         }
-//        List<Repair> repairs = restTemplate.getForObject("http://localhost:8093/api/v1/repair/byticket/" + ticket.getIdTicket(), List.class);
-        List<Repair> repairs = repairFeignClient.getRepairsByTicket(ticket.getIdTicket());
+        ResponseEntity<List<Repair>> response = restTemplate.exchange(
+                "http://localhost:8080/api/v1/repair/byticket/" + ticket.getIdTicket(),
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Repair>>() {}
+        );
+        List<Repair> repairs = response.getBody();
         double totalPrice = 0;
         if (repairs.isEmpty()) {
-            System.out.println("No repairs found for ticket ID: " + ticket.getIdTicket());
             return null;
         }
         totalPrice = internalCalculationService.calculateTotalPrice(ticket);
         ticket.setTotalPrice((int) Math.round(totalPrice));
-        System.out.println("Total price: " + ticket.getTotalPrice());
-        System.out.println("Saved Ticket: " + ticket.toString());
         return ticketRepository.save(ticket);
     }
 
-    // A init method to call all the operations before saving the ticket
     public TicketEntity saveTicketWithOperations(TicketEntity ticket){
         if (ticket == null) {
-            // Handle the case where ticket is null
+            System.out.println("Ticket is null");
             return null;
         }
         ticket = saveBasePrice(ticket);
         ticket = saveKMSurcharge(ticket);
+        System.out.println("testeando saving todo");
+        System.out.println("GUARDO EL KM XD: "+ ticket.getSurchargeForKM());
         ticket = saveAgeSurcharge(ticket);
         ticket = saveSurchargeForDelay(ticket);
         ticket = saveDiscountByRepairs(ticket);
@@ -331,5 +315,72 @@ public class TicketService {
         ticket = saveTotalPrice(ticket);
         return ticketRepository.save(ticket);
     }
+
+
+    // HU 4: Show info from repairs
+
+    // i want to get the values from the vehicle
+    public void getVehicleData(TicketEntity ticket){
+        System.out.println("ESTOY CONSIGUIENDO LA DATA DEL VEHICULO");
+        if (ticket == null) {
+            return;
+        }
+        Long licensePlate = ticket.getLicensePlate();
+        Vehicle vehicle = restTemplate.getForObject("http://localhost:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
+        if (vehicle == null) {
+            System.out.println("Vehicle is null");
+            return;
+        }
+        ticket.setModel(vehicle.getModel());
+        ticket.setBrand(vehicle.getBrand());
+        ticket.setVehicleType(vehicle.getVehicleType());
+        ticket.setYear(vehicle.getYear());
+        System.out.println("Model: " + ticket.getModel());
+        System.out.println("Brand: " + ticket.getBrand());
+        System.out.println("Vehicle type: " + ticket.getVehicleType());
+        System.out.println("Year: " + ticket.getYear());
+        ticketRepository.save(ticket);
+    }
+    // idem but using repairs
+    public void getRepairData(TicketEntity ticket){
+        if (ticket == null) {
+            return;
+        }
+        Long ticketId = ticket.getIdTicket();
+        ResponseEntity<List<Repair>> response = restTemplate.exchange(
+                "http://localhost:8080/api/v1/repair/byticket/" + ticketId,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Repair>>() {}
+        );
+        List<Repair> repairs = response.getBody();
+        if (repairs == null || repairs.isEmpty()) {
+            return;
+        }
+        int totalSurcharges = 0;
+        int totalDiscounts = 0;
+        int subTotal = 0;
+        for (Repair repair : repairs) {
+            totalSurcharges += repair.getKmSurcharge() + repair.getAgeSurcharge() + repair.getDelaySurcharge();
+            subTotal += repair.getBasePrice() + repair.getKmSurcharge() + repair.getAgeSurcharge() + repair.getDelaySurcharge() - repair.getRepairsDiscount() - repair.getDayDiscount();
+        }
+        System.out.println("YA PASAMOS LOS SURCHARGES");
+        totalDiscounts = (int) (ticket.getDiscountForRepairs() + ticket.getDiscountPerDay());
+        ticket.setTotalSurcharges(totalSurcharges);
+        ticket.setTotalDiscounts(totalDiscounts);
+        subTotal = subTotal - totalDiscounts;
+        ticket.setSubTotal(subTotal);
+        ticket.setIvaValue((int) Math.round(subTotal * 0.19));
+        int totalPrice = subTotal + ticket.getIvaValue();
+        ticket.setTotalPrice(totalPrice);
+        System.out.println("Subtotal: " + ticket.getSubTotal());
+        System.out.println("Discounts: " + ticket.getTotalDiscounts());
+        System.out.println("surcharges: " + ticket.getTotalSurcharges());
+        System.out.println("IVA: " + ticket.getIvaValue());
+        System.out.println("Total price: " + ticket.getTotalPrice());
+        ticketRepository.save(ticket);
+    }
+
+
 
 }

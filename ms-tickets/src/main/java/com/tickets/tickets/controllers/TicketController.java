@@ -12,7 +12,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/ticket")
-@CrossOrigin(origins = "*")
 public class TicketController {
 
     @Autowired
@@ -127,17 +126,24 @@ public class TicketController {
     // Initialization for the ticket
     @PutMapping(value = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TicketEntity> saveInit(@RequestBody TicketEntity ticket){
+        System.out.println("Init ticket");
         if (ticket == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-        System.out.println("Init ticket");
-        ticketService.saveBasePrice(ticket);
-        ticketService.saveKMSurcharge(ticket);
-        ticketService.saveAgeSurcharge(ticket);
-        ticketService.saveSurchargeForDelay(ticket);
-        ticketService.saveDiscountByRepairs(ticket);
-        ticketService.saveDiscountByDay(ticket);
-        ticketService.saveTotalPrice(ticket);
+        System.out.println(ticket.toString());
+        return ResponseEntity.ok(ticketService.saveTicketWithOperations(ticket));
+    }
+    // init values from vehicles and repairs for ticket
+    @PutMapping(value = "/initValues", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<TicketEntity> saveInitValues(@RequestBody TicketEntity ticket){
+        System.out.println("Init values");
+        if (ticket == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        System.out.println(ticket.toString());
+        ticketService.getVehicleData(ticket);
+        ticketService.getRepairData(ticket);
+        System.out.println(ticket.toString());
         return ResponseEntity.ok(ticket);
     }
 

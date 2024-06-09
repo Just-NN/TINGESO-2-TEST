@@ -1,0 +1,27 @@
+.navbar {
+    background-color: #333; /* Dark grey background */
+    color: #fff; /* White text color */
+    border-radius: 10vh;
+    padding: 3vh;
+}
+
+.navbar a {
+    color: #4CAF50; /* White link color */
+}
+
+.navbar a:hover {
+    color: #275529; /* Light grey link color on hover */
+}
+
+.navbar .navbar-brand {
+    color: #4CAF50; /* Green color for the brand */
+}
+
+.navbar .navbar-brand:hover {
+    color: #3e8e41; /* Dark green color for the brand on hover */
+}
+
+
+.navbar .nav-item.active a {
+    color: #4CAF50; /* Green color for the active link */
+}

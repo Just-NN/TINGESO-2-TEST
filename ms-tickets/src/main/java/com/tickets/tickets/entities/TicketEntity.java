@@ -46,7 +46,7 @@ public class TicketEntity {
     private double surchargeForKM;
     private double surchargeForAge;
     private double surchargeForDelay;
-    private double discountForRepairs;
+    private int discountForRepairs;
     private double discountPerDay;
     private double discountForBonus;
     private double brandBonus;
@@ -57,6 +57,21 @@ public class TicketEntity {
     // Total price of the ticket
     private int totalPrice;
 
+    //--------------------------------------------------
+    // Here goes the attributes for my HU4
+    // Data from vehicle
+    private String brand;
+    private String model;
+    private int vehicleType;
+    private int year;
+    // Data from repair
+    private int totalSurcharges;
+    private int totalDiscounts;
+    private int subTotal;
+    // Calculated value
+    private int ivaValue;
+
+
     // I'll need the methods to calculate the time
     public LocalTime getEntryTime(){
         if (this.entryDate == null) {
@@ -64,6 +79,24 @@ public class TicketEntity {
             return null;
         }
         ZonedDateTime zdt = this.entryDate.toInstant().atZone(ZoneId.systemDefault());
+        return zdt.toLocalTime();
+    }
+    // idem but for exit
+    public LocalTime getExitTime(){
+        if (this.exitDate == null) {
+            // return a default value or throw an exception
+            return null;
+        }
+        ZonedDateTime zdt = this.exitDate.toInstant().atZone(ZoneId.systemDefault());
+        return zdt.toLocalTime();
+    }
+    // idem but for pickup
+    public LocalTime getPickupTime(){
+        if (this.pickupDate == null) {
+            // return a default value or throw an exception
+            return null;
+        }
+        ZonedDateTime zdt = this.pickupDate.toInstant().atZone(ZoneId.systemDefault());
         return zdt.toLocalTime();
     }
 

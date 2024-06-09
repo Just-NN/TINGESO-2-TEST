@@ -1,5 +1,6 @@
 package com.repairs.repairs.controllers;
 
+import com.repairs.repairs.auxClass.BasePriceRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,12 +13,10 @@ import com.repairs.repairs.entities.RepairEntity;
 import com.repairs.repairs.repositories.RepairRepository;
 import com.repairs.repairs.services.RepairService;
 
-import java.util.Calendar;
 import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/repair")
-@CrossOrigin(origins = "*")
 public class RepairController {
 
     @Autowired
@@ -89,9 +88,11 @@ public class RepairController {
 
     // Base Price
     @PutMapping("/setBasePrice")
-    public ResponseEntity<Integer> setBasePrice(@RequestBody RepairEntity repair){
-        int engine = 1; // MUST modify this to use the microservice
-        int basePrice = repairService.calculateBasePrice(repair, engine);
+    public ResponseEntity<Integer> setBasePrice(@RequestBody BasePriceRequest baseRequest){
+        RepairEntity repair = baseRequest.getRepair();
+        int engineType = baseRequest.getEngineType();
+        int basePrice = repairService.calculateBasePrice(repair, engineType);
+        System.out.println("Base price: " + basePrice);
         return ResponseEntity.ok(basePrice);
     }
 
@@ -124,6 +125,10 @@ public class RepairController {
     @PutMapping("/calculateTotalPrice")
     public ResponseEntity<Integer> calculateTotalPrice(@RequestBody RepairEntity repair){
         return ResponseEntity.ok(repairService.calculateTotalPrice(repair));
+    }
+    @PutMapping("/calculateDiscountByDay")
+    public ResponseEntity<Integer> calculateDiscountByDay(@RequestBody RepairEntity repair){
+        return ResponseEntity.ok(repairService.calculateDiscountByDay(repair));
     }
 
 

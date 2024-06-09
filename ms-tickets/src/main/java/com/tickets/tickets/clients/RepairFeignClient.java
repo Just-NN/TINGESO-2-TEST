@@ -1,5 +1,7 @@
 package com.tickets.tickets.clients;
 
+import com.fasterxml.jackson.databind.ser.Serializers;
+import com.tickets.tickets.auxClass.BasePriceRequest;
 import com.tickets.tickets.configurations.FeignClientConfig;
 import com.tickets.tickets.models.Repair;
 import com.tickets.tickets.models.Vehicle;
@@ -12,37 +14,36 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(value = "ms-repairs",
-        path = "api/v1/repair",
-        configuration = {FeignClientConfig.class}
-        )
+@FeignClient(name = "ms-repairs",
+        url = "http://localhost:8080/api/v1/repair",
+        configuration = {FeignClientConfig.class})
 public interface RepairFeignClient {
 
     @GetMapping("/byticket/{idTicket}")
     List<Repair> getRepairsByTicket(@PathVariable("idTicket") Long id);
 
     @PutMapping("/setBasePrice")
-    int setBasePrice(@RequestBody Repair repair);
+    Integer setBasePrice(@RequestBody BasePriceRequest basePriceRequest);
 
     @GetMapping("/{id}")
     Repair getRepairById(@PathVariable Long id);
 
     @PutMapping("/calculateKMSurcharge/{percentage}")
-    int calculateKMSurcharge(@RequestBody Repair repair, @PathVariable double percentage);
+    Integer calculateKMSurcharge(@RequestBody Repair repair, @PathVariable double percentage);
 
     @PutMapping("/calculateAgeSurcharge/{percentage}")
-    public ResponseEntity<Integer> calculateAgeSurcharge(@RequestBody Repair repair, @PathVariable double percentage);
+    Integer calculateAgeSurcharge(@RequestBody Repair repair, @PathVariable double percentage);
 
     @PutMapping("/calculateDelaySurcharge/{percentage}")
-    int calculateDelaySurcharge(@RequestBody Repair repair, @PathVariable double percentage);
+    Integer calculateDelaySurcharge(@RequestBody Repair repair, @PathVariable double percentage);
 
     @PutMapping("/calculateDayDiscount/{percentage}")
-    int calculateDayDiscount(@RequestBody Repair repair, @PathVariable double percentage);
+    Integer calculateDayDiscount(@RequestBody Repair repair, @PathVariable double percentage);
 
     @PutMapping("/calculateRepairsDiscount/{percentage}")
-    int calculateRepairsDiscount(@RequestBody Repair repair, @PathVariable double percentage);
+    Integer calculateRepairsDiscount(@RequestBody Repair repair, @PathVariable double percentage);
 
     @PutMapping("/calculateTotalPrice")
-    int calculateTotalPrice(@RequestBody Repair repair);
+    Integer calculateTotalPrice(@RequestBody Repair repair);
 
 }

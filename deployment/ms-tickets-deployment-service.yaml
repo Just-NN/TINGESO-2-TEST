@@ -1,64 +1,64 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: ms-orders-deployment
+  name: ms-tickets-deployment
   labels:
-    app: ms-orders-deployment
+    app: ms-tickets-deployment
 spec:
   selector:
     matchLabels:
-      app: ms-orders-deployment
+      app: ms-tickets-deployment
   replicas: 1
   template:
     metadata:
       labels:
-        app: ms-orders-deployment
+        app: ms-tickets-deployment
     spec:
       containers:
-        - name: ms-orders
-          image: polloh/ms-orders
+        - name: ms-tickets
+          image: ivanguajardo13/ms-tickets-pep2
           ports:
-            - containerPort: 8090
+            - containerPort: 8091
           env:
             - name: SERVER_PORT
-              value: "8090"
+              value: "8091"
             - name: DB_HOST
               valueFrom:
                 configMapKeyRef:
                   name: postgres-config-map
-                  key: DB_HOST_ORDERS
+                  key: DB_HOST_TICKETS
             - name: DB_PORT
               valueFrom:
                 configMapKeyRef:
                   name: postgres-config-map
-                  key: DB_PORT_ORDERS
+                  key: DB_PORT_TICKETS
             - name: DB_DBNAME
               valueFrom:
                 configMapKeyRef:
                   name: postgres-config-map
-                  key: DB_DBNAME_ORDERS
+                  key: DB_DBNAME_TICKETS
             - name: DB_USER
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: DB_USER_ORDERS
+                  key: DB_USER_TICKETS
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: DB_PASSWORD_ORDERS
+                  key: DB_PASSWORD_TICKETS
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: ms-orders-service
+  name: ms-tickets-service
   labels:
-    app: ms-orders-service
+    app: ms-tickets-service
 spec:
   selector:
-    app: ms-orders-deployment
+    app: ms-tickets-deployment
   ports:
     - protocol: TCP
-      port: 8090
-      targetPort: 8090
+      port: 8091
+      targetPort: 8091
   type: LoadBalancer

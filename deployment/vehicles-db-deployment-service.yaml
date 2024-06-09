@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: orders-db-pv
+  name: vehicles-db-pv
   labels:
     type: local
 spec:
@@ -11,12 +11,12 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/data/orders-db-data"
+    path: "/data/vehicles-db-data"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: orders-db-pvc
+  name: vehicles-db-pvc
   labels:
     app: postgres
     tier: database
@@ -31,24 +31,24 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: orders-db-deployment
+  name: vehicles-db-deployment
   labels:
-    app: orders-db-deployment
+    app: vehicles-db-deployment
     tier: database
 spec:
   selector:
     matchLabels:
-      app: orders-db-deployment
+      app: vehicles-db-deployment
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: orders-db-deployment
+        app: vehicles-db-deployment
         tier: database
     spec:
       containers:
-        - name: orders-db
+        - name: vehicles-db
           image: postgres
           imagePullPolicy: "IfNotPresent"
           ports:
@@ -58,33 +58,33 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: DB_USER_ORDERS
+                  key: DB_USER_VEHICLES
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: DB_PASSWORD_ORDERS
+                  key: DB_PASSWORD_VEHICLES
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: orders-db-data
+              name: vehicles-db-data
       volumes:
-        - name: orders-db-data
+        - name: vehicles-db-data
           persistentVolumeClaim:
-            claimName: orders-db-pvc
+            claimName: vehicles-db-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: orders-db-service
+  name: vehicles-db-service
   labels:
-    app: orders-db-service
+    app: vehicles-db-service
     tier: database
 spec:
   ports:
-    - port: 5432
+    - port: 5433
       targetPort: 5432
       protocol: TCP
   selector:
-    app: orders-db-deployment
+    app: vehicles-db-deployment
     tier: database
   type: LoadBalancer

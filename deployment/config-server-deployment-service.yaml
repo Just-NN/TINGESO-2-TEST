@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: config-server
-          image: polloh/config-server
+          image: ivanguajardo13/config-server-pep2
           ports:
             - containerPort: 8888
 ---

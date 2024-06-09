@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: products-db-pv
+  name: tickets-db-pv
   labels:
     type: local
 spec:
@@ -11,12 +11,12 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/data/products-db-data"
+    path: "/data/tickets-db-data"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: products-db-pvc
+  name: tickets-db-pvc
   labels:
     app: postgres
     tier: database
@@ -31,24 +31,24 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: products-db-deployment
+  name: tickets-db-deployment
   labels:
-    app: products-db-deployment
+    app: tickets-db-deployment
     tier: database
 spec:
   selector:
     matchLabels:
-      app: products-db-deployment
+      app: tickets-db-deployment
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: products-db-deployment
+        app: tickets-db-deployment
         tier: database
     spec:
       containers:
-        - name: products-db
+        - name: tickets-db
           image: postgres
           imagePullPolicy: "IfNotPresent"
           ports:
@@ -58,33 +58,33 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: DB_USER_PRODUCTS
+                  key: DB_USER_TICKETS
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: DB_PASSWORD_PRODUCTS
+                  key: DB_PASSWORD_TICKETS
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: products-db-data
+              name: tickets-db-data
       volumes:
-        - name: products-db-data
+        - name: tickets-db-data
           persistentVolumeClaim:
-            claimName: products-db-pvc
+            claimName: tickets-db-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: products-db-service
+  name: tickets-db-service
   labels:
-    app: products-db-service
+    app: tickets-db-service
     tier: database
 spec:
   ports:
-    - port: 5433
+    - port: 5432
       targetPort: 5432
       protocol: TCP
   selector:
-    app: products-db-deployment
+    app: tickets-db-deployment
     tier: database
   type: LoadBalancer
