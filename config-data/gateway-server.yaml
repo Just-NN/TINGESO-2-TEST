@@ -17,9 +17,9 @@ spring:
       globalcors:
         cors-configurations:
           '[/**]':
-            allowedOrigins: "http://localhost:3000"
-            allowedMethods: "http://localhost:3000"
-            allowedHeaders: "http://localhost:3000"
+            allowedOrigins: "*"
+            allowedMethods: "*"
+            allowedHeaders: "*"
       routes:
         - id: ms-tickets
           uri: lb://ms-tickets
