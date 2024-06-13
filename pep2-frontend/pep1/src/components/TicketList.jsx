@@ -34,16 +34,19 @@ const TicketList = () => {
         // Fetch the updated tickets after initializing
         fetchTickets();
     }
-    const saveInit = (ticket) => {
-        console.log('Initializing ticket:', ticket.idTicket)
-        ticketService.saveInitValues(ticket)
-            .then(response => {
-                console.log('Response data:', response.data);
-                // Update the ticket in the state if necessary
-            })
-            .catch(error => {
-                console.error('There was an error!', error, 'IN TICKET', ticket.idTicket);
-            });
+    const saveInitAllTickets = () => {
+        console.log('Initializing all tickets...')
+        tickets.forEach(ticket => {
+            console.log('Initializing ticket:', ticket.idTicket)
+            ticketService.saveInit(ticket)
+                .then(response => {
+                    console.log('Response data:', response.data);
+                    // Update the ticket in the state if necessary
+                })
+                .catch(error => {
+                    console.error('There was an error!', error, 'IN TICKET', ticket.idTicket);
+                });
+        });
     }
 
     useEffect(() => {
@@ -56,7 +59,7 @@ const TicketList = () => {
             <h1>Ticket List</h1>
 
             <button className="reload-button" onClick={fetchTickets}>Reload Table</button>
-            <button className="init-button" onClick={saveInit}>Initialize 1</button>
+            <button className="init-button" onClick={saveInitAllTickets}>Initialize 1</button>
             <button className="init-button" onClick={initTickets}>Initialize 2</button>
 
             <table className="repair-table">

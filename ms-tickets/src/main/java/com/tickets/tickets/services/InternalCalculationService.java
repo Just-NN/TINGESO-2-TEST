@@ -1,7 +1,5 @@
 package com.tickets.tickets.services;
 
-import com.tickets.tickets.clients.RepairFeignClient;
-import com.tickets.tickets.clients.VehicleFeignClient;
 import com.tickets.tickets.entities.TicketEntity;
 import com.tickets.tickets.models.Repair;
 import com.tickets.tickets.models.Vehicle;
@@ -28,17 +26,7 @@ public class InternalCalculationService {
     @Autowired
     private TicketRepository ticketRepository;
 
-    RepairFeignClient repairFeignClient;
-    VehicleFeignClient vehicleFeignClient;
 
-    @Autowired
-    public InternalCalculationService(TicketRepository ticketRepository,
-                         RepairFeignClient repairFeignClient,
-                         VehicleFeignClient vehicleFeignClient) {
-        this.ticketRepository = ticketRepository;
-        this.repairFeignClient = repairFeignClient;
-        this.vehicleFeignClient = vehicleFeignClient;
-    }
     @Autowired
     RestTemplate restTemplate;
 
@@ -56,7 +44,7 @@ public class InternalCalculationService {
         // Get the license plate from the ticket
         Long licensePlate = ticket.getLicensePlate();
 
-        Vehicle vehicle = restTemplate.getForObject("http://localhost:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
+        Vehicle vehicle = restTemplate.getForObject("http://gateway-service:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
         if (vehicle == null) {
             return -1;
         }
@@ -105,7 +93,7 @@ public class InternalCalculationService {
             return -1;
         }
         Long licensePlate = ticket.getLicensePlate();
-        Vehicle vehicle = restTemplate.getForObject("http://localhost:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
+        Vehicle vehicle = restTemplate.getForObject("http://gateway-service:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
         System.out.println("-----------------------");
         System.out.println("Vehicle: " + vehicle);
         if (vehicle == null) {
@@ -186,7 +174,7 @@ public class InternalCalculationService {
             System.out.println("Ticket: " + t);
             System.out.println("VOY A PROBAR SUERTE");
             ResponseEntity<List<Repair>> response = restTemplate.exchange(
-                    "http://localhost:8080/api/v1/repair/byticket/" + t.getIdTicket(),
+                    "http://gateway-service:8080/api/v1/repair/byticket/" + t.getIdTicket(),
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<List<Repair>>() {}
@@ -207,7 +195,7 @@ public class InternalCalculationService {
             return -1;
         }
         Long licensePlate = ticket.getLicensePlate();
-        Vehicle vehicle = restTemplate.getForObject("http://localhost:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
+        Vehicle vehicle = restTemplate.getForObject("http://gateway-service:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
         System.out.println("Vehicle: " + vehicle);
         if (vehicle == null) {
             return -1;
