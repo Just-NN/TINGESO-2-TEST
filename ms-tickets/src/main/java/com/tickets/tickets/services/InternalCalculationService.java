@@ -44,7 +44,7 @@ public class InternalCalculationService {
         // Get the license plate from the ticket
         Long licensePlate = ticket.getLicensePlate();
 
-        Vehicle vehicle = restTemplate.getForObject("http://gateway-service:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
+        Vehicle vehicle = restTemplate.getForObject("http://gateway-server/api/v1/vehicle/" + licensePlate, Vehicle.class);
         if (vehicle == null) {
             return -1;
         }
@@ -93,7 +93,7 @@ public class InternalCalculationService {
             return -1;
         }
         Long licensePlate = ticket.getLicensePlate();
-        Vehicle vehicle = restTemplate.getForObject("http://gateway-service:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
+        Vehicle vehicle = restTemplate.getForObject("http://gateway-server/api/v1/vehicle/" + licensePlate, Vehicle.class);
         System.out.println("-----------------------");
         System.out.println("Vehicle: " + vehicle);
         if (vehicle == null) {
@@ -174,7 +174,7 @@ public class InternalCalculationService {
             System.out.println("Ticket: " + t);
             System.out.println("VOY A PROBAR SUERTE");
             ResponseEntity<List<Repair>> response = restTemplate.exchange(
-                    "http://gateway-service:8080/api/v1/repair/byticket/" + t.getIdTicket(),
+                    "http://gateway-server/api/v1/repair/byticket/" + t.getIdTicket(),
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<List<Repair>>() {}
@@ -195,7 +195,7 @@ public class InternalCalculationService {
             return -1;
         }
         Long licensePlate = ticket.getLicensePlate();
-        Vehicle vehicle = restTemplate.getForObject("http://gateway-service:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
+        Vehicle vehicle = restTemplate.getForObject("http://gateway-server/api/v1/vehicle/" + licensePlate, Vehicle.class);
         System.out.println("Vehicle: " + vehicle);
         if (vehicle == null) {
             return -1;
