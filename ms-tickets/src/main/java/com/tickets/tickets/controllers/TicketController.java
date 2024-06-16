@@ -1,5 +1,6 @@
 package com.tickets.tickets.controllers;
 
+import com.tickets.tickets.models.Vehicle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -66,9 +67,11 @@ public class TicketController {
     //------------------------------------------------------------------------------------------------------------
     // Operations
     @PutMapping("/basePrice")
-    public ResponseEntity<TicketEntity> saveBasePrice(@RequestBody TicketEntity ticket){
+    public ResponseEntity<TicketEntity> saveBasePrice(@RequestBody Long id){
+        TicketEntity ticket = ticketService.getTicketById(id);
         System.out.println("Base price");
         if (ticket == null) {
+            System.out.println("Ticket is null");
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
         return ResponseEntity.ok(ticketService.saveBasePrice(ticket));
@@ -147,5 +150,14 @@ public class TicketController {
         return ResponseEntity.ok(ticket);
     }
 
+    @GetMapping("/getVehicle/{id}")
+    public ResponseEntity<Vehicle> getVehicleData(@PathVariable Long id){
+        Vehicle vehicle = ticketService.getVehicleByLicensePlate(id);
+        if (vehicle == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        System.out.println(vehicle.toString());
+        return ResponseEntity.ok(vehicle);
+    }
 
 }
