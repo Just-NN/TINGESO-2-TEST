@@ -268,6 +268,7 @@ public class InternalCalculationService {
         double delaySurcharge = ticket.getSurchargeForDelay();
         double repairDiscount = ticket.getDiscountForRepairs();
         double dayDiscount = ticket.getDiscountPerDay();
+        double brandBonus = ticket.getBrandBonus();
         double finalPrice = 0;
         System.out.println("---------------------");
         System.out.println("Ticket: " + ticket.getIdTicket());

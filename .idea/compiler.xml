@@ -10,6 +10,7 @@
         <module name="ms-repairs" />
         <module name="repairs" />
         <module name="config-server" />
+        <module name="ms-bonus" />
         <module name="vehicles" />
         <module name="gateway-server" />
         <module name="ms-tickets" />
@@ -27,6 +28,7 @@
       <module name="config-server" options="-parameters" />
       <module name="eureka-server" options="-parameters" />
       <module name="gateway-server" options="-parameters" />
+      <module name="ms-bonus" options="-parameters" />
       <module name="ms-bonusbrands" options="-parameters" />
       <module name="ms-orders" options="-parameters" />
       <module name="ms-repairs" options="-parameters" />

@@ -14,3 +14,6 @@ data:
   DB_HOST_REPAIRS: repairs-db-service
   DB_PORT_REPAIRS: "5434"
   DB_DBNAME_REPAIRS: repairs
+  DB_HOST_BONUS: bonus-db-service
+  DB_PORT_BONUS: "5435"
+  DB_DBNAME_BONUS: bonus

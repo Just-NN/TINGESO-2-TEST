@@ -125,6 +125,13 @@ public class TicketController {
         }
         return ResponseEntity.ok(ticketService.saveTotalPrice(ticket));
     }
+    @PutMapping("/brandBonus")
+    public ResponseEntity<TicketEntity> saveBrandBonus(@RequestBody TicketEntity ticket){
+        if (ticket == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+        return ResponseEntity.ok(ticketService.saveBonusBrand(ticket));
+    }
     //------------------------------------------------------------------------------------------------------------
     // Initialization for the ticket
     @PutMapping(value = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -159,5 +166,6 @@ public class TicketController {
         System.out.println(vehicle.toString());
         return ResponseEntity.ok(vehicle);
     }
+
 
 }

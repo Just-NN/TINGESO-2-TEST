@@ -278,6 +278,23 @@ public class TicketService {
         ticket.setDiscountPerDay(discountByDay);
         return ticketRepository.save(ticket);
     }
+    public TicketEntity saveBonusBrand(TicketEntity ticket){
+        if (ticket == null) {
+            return null;
+        }
+        Long licensePlate = ticket.getLicensePlate();
+        Vehicle vehicle = restTemplate.getForObject("http://gateway-server-service:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
+        if (vehicle == null) {
+            return null;
+        }
+        String brand = vehicle.getBrand();
+        int bonus = restTemplate.getForObject("http://gateway-server-service:8080/api/v1/bonusBrand/highest/" + brand, Integer.class);
+        if (bonus == 0) {
+            return null;
+        }
+        ticket.setBrandBonus(bonus);
+        return ticketRepository.save(ticket);
+    }
 
     public TicketEntity saveTotalPrice(TicketEntity ticket){
         if (ticket == null) {
