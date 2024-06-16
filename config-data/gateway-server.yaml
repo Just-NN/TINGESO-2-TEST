@@ -37,6 +37,6 @@ spring:
         - id: ms-bonus
           uri: lb://ms-bonus
           predicates:
-            - Path=/api/v1/bonus/**
+            - Path=/api/v1/bonusBrand/**
 
 
