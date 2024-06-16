@@ -21,7 +21,7 @@ spec:
             - containerPort: 8091
           env:
             - name: SERVER_PORT
-              value: "8091"
+              value: "0"
             - name: DB_HOST
               valueFrom:
                 configMapKeyRef:
@@ -47,18 +47,3 @@ spec:
                 secretKeyRef:
                   name: postgres-credentials
                   key: DB_PASSWORD_TICKETS
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: ms-tickets-service
-  labels:
-    app: ms-tickets-service
-spec:
-  selector:
-    app: ms-tickets-deployment
-  ports:
-    - protocol: TCP
-      port: 8091
-      targetPort: 8091
-  type: LoadBalancer
