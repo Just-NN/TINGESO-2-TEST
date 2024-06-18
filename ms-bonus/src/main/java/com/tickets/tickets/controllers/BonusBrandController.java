@@ -76,6 +76,8 @@ public class BonusBrandController {
         BonusBrandEntity highestBonusBrandEntity = bonusBrandEntities.get(0);
         highestBonusBrandEntity.setActive(false); // set active to false
         highestBonusBrandEntity.setIdTicket(idTicket);
+        System.out.println("Highest bonus: " + highestBonusBrandEntity.getBonus());
+        System.out.println("Highest bonus id: " + highestBonusBrandEntity.getIdBonus());
         bonusBrandService.updateBonusBrand(highestBonusBrandEntity); // update the entity
         return ResponseEntity.ok(highestBonusBrandEntity.getBonus());
     }
