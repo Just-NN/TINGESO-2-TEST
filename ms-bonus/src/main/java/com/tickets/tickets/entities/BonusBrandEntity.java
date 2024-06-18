@@ -1,4 +1,4 @@
-package usach.tingeso.entities;
+package com.tickets.tickets.entities;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,11 +1,11 @@
-package usach.tingeso.controllers;
+package com.tickets.tickets.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import usach.tingeso.entities.BonusBrandEntity;
-import usach.tingeso.services.BonusBrandService;
+import com.tickets.tickets.entities.BonusBrandEntity;
+import com.tickets.tickets.services.BonusBrandService;
 
 @RestController
 @RequestMapping("api/v1/bonusBrand")

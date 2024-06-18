@@ -1,9 +1,9 @@
-package usach.tingeso.services;
+package com.tickets.tickets.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import usach.tingeso.entities.BonusBrandEntity;
-import usach.tingeso.repositories.BonusBrandRepository;
+import com.tickets.tickets.repositories.BonusBrandRepository;
+import com.tickets.tickets.entities.BonusBrandEntity;
 
 import java.util.List;
 
@@ -14,7 +14,7 @@ public class BonusBrandService {
 
     // Basic CRUD operations
     public BonusBrandEntity getBonusBrandById(Long id){
-        if (bonusBrandRepository.findBonusBrandByIdBonus(id) == null)
+        if (id == null)
             return null;
         return bonusBrandRepository.findBonusBrandByIdBonus(id);
     }

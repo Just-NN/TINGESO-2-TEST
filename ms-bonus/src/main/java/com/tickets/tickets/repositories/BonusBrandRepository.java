@@ -1,10 +1,11 @@
-package usach.tingeso.repositories;
+package com.tickets.tickets.repositories;
 
+import com.tickets.tickets.entities.BonusBrandEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-import usach.tingeso.entities.BonusBrandEntity;
+
 
 import java.util.List;
 import java.util.Optional;
