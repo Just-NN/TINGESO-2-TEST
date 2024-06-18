@@ -287,7 +287,7 @@ public class InternalCalculationService {
             return -1;
         }
         else{
-            finalPrice = (ticket.getBasePrice()*((kmSurcharge + ageSurcharge + delaySurcharge - dayDiscount)) - repairDiscount) *1.19;
+            finalPrice = (ticket.getBasePrice()*((kmSurcharge + ageSurcharge + delaySurcharge - dayDiscount)) - repairDiscount - brandBonus) *1.19;
         }
         return finalPrice;
     }

@@ -7,10 +7,13 @@ import com.tickets.tickets.models.Vehicle;
 import com.tickets.tickets.repositories.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -288,8 +291,15 @@ public class TicketService {
             return null;
         }
         String brand = vehicle.getBrand();
-        int bonus = restTemplate.getForObject("http://gateway-server-service:8080/api/v1/bonusBrand/highest/" + brand, Integer.class);
-        if (bonus == 0) {
+        HttpHeaders headers = new HttpHeaders();
+        HttpEntity<?> entity = new HttpEntity<>(headers);
+
+        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://gateway-server-service:8080/api/v1/bonusBrand/highestActive/" + brand + "/" + ticket.getIdTicket());
+
+        ResponseEntity<Integer> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, Integer.class);
+
+        Integer bonus = response.getBody();
+        if (bonus == null || bonus == 0) {
             return null;
         }
         ticket.setBrandBonus(bonus);
@@ -329,6 +339,7 @@ public class TicketService {
         ticket = saveSurchargeForDelay(ticket);
         ticket = saveDiscountByRepairs(ticket);
         ticket = saveDiscountByDay(ticket);
+        ticket = saveBonusBrand(ticket);
         ticket = saveTotalPrice(ticket);
         return ticketRepository.save(ticket);
     }

@@ -1,11 +1,14 @@
 package com.tickets.tickets.controllers;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.tickets.tickets.entities.BonusBrandEntity;
 import com.tickets.tickets.services.BonusBrandService;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("api/v1/bonusBrand")
@@ -63,12 +66,17 @@ public class BonusBrandController {
         Integer bonus = bonusBrandService.getBonusByBrand(brand);
         return ResponseEntity.ok(bonus);
     }
-    @GetMapping("/highest/{brand}")
-    public ResponseEntity<Iterable<BonusBrandEntity>> findHighestActiveBonusByBrand(@PathVariable String brand){
-        Iterable<BonusBrandEntity> bonusBrandEntities = bonusBrandService.findHighestActiveBonusByBrand(brand);
-        if (bonusBrandEntities == null) {
+    @GetMapping("/highestActive/{brand}/{idTicket}")
+    public ResponseEntity<Integer> findHighestActiveBonusByBrand(@PathVariable String brand, @PathVariable Long idTicket){
+        List<BonusBrandEntity> bonusBrandEntities = bonusBrandService.findHighestActiveBonusByBrand(brand);
+        if (bonusBrandEntities == null || bonusBrandEntities.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return ResponseEntity.ok(bonusBrandEntities);
+        // Assuming that the first entity in the list has the highest bonus
+        BonusBrandEntity highestBonusBrandEntity = bonusBrandEntities.get(0);
+        highestBonusBrandEntity.setActive(false); // set active to false
+        highestBonusBrandEntity.setIdTicket(idTicket);
+        bonusBrandService.updateBonusBrand(highestBonusBrandEntity); // update the entity
+        return ResponseEntity.ok(highestBonusBrandEntity.getBonus());
     }
 }
