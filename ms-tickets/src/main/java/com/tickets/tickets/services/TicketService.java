@@ -271,13 +271,14 @@ public class TicketService {
         double discountByDay = internalCalculationService.calculateDiscountByDay(ticket);
 
         for (Repair repair : repairs) {
+            System.out.println("Repair: " + repair.toString());
             restTemplate.put("http://gateway-server-service:8080/api/v1/repair/calculateDiscountByDay", repair);
             Repair updatedRepair = restTemplate.getForObject("http://gateway-server-service:8080/api/v1/repair/" + repair.getIdRepair(), Repair.class);
             if (updatedRepair != null) {
                 totalDiscountByDay += updatedRepair.getDayDiscount();
             }
         }
-
+        System.out.println("Total discount by day: " + totalDiscountByDay);
         ticket.setDiscountPerDay(discountByDay);
         return ticketRepository.save(ticket);
     }
@@ -388,9 +389,40 @@ public class TicketService {
         int totalSurcharges = 0;
         int totalDiscounts = 0;
         int subTotal = 0;
+        RestTemplate restTemplate = new RestTemplate();
+
         for (Repair repair : repairs) {
-            totalSurcharges += repair.getKmSurcharge() + repair.getAgeSurcharge() + repair.getDelaySurcharge();
-            subTotal += repair.getBasePrice() + repair.getKmSurcharge() + repair.getAgeSurcharge() + repair.getDelaySurcharge() - repair.getRepairsDiscount() - repair.getDayDiscount();
+            // Calculate the total surcharges and discounts in each repair using a request
+            double percentage = 0.2; // replace with the actual percentage value
+
+            HttpEntity<Repair> requestEntity = new HttpEntity<>(repair);
+
+            // Calculate KM Surcharge
+            totalSurcharges += restTemplate.exchange(
+                    "http://gateway-server-service:8080/api/v1/repair/calculateKMSurcharge/" + percentage,
+                    HttpMethod.PUT, requestEntity, Integer.class).getBody();
+
+            // Calculate Age Surcharge
+            totalSurcharges += restTemplate.exchange(
+                    "http://gateway-server-service:8080/api/v1/repair/calculateAgeSurcharge/" + percentage,
+                    HttpMethod.PUT, requestEntity, Integer.class).getBody();
+
+            // Calculate Delay Surcharge
+            totalSurcharges += restTemplate.exchange(
+                    "http://gateway-server-service:8080/api/v1/repair/calculateDelaySurcharge/" + percentage,
+                    HttpMethod.PUT, requestEntity, Integer.class).getBody();
+
+            // Calculate Repairs Discount
+            totalSurcharges -= restTemplate.exchange(
+                    "http://gateway-server-service:8080/api/v1/repair/calculateRepairsDiscount/" + percentage,
+                    HttpMethod.PUT, requestEntity, Integer.class).getBody();
+
+            // Calculate Day Discount
+            totalSurcharges -= restTemplate.exchange(
+                    "http://gateway-server-service:8080/api/v1/repair/calculateDayDiscount/" + percentage,
+                    HttpMethod.PUT, requestEntity, Integer.class).getBody();
+
+            subTotal += repair.getBasePrice() + totalSurcharges;
         }
         System.out.println("YA PASAMOS LOS SURCHARGES");
         totalDiscounts = (int) (ticket.getDiscountForRepairs() + ticket.getDiscountPerDay());

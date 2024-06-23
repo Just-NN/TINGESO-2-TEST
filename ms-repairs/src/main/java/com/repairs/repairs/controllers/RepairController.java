@@ -130,6 +130,7 @@ public class RepairController {
     public ResponseEntity<Integer> calculateDiscountByDay(@RequestBody RepairEntity repair){
         return ResponseEntity.ok(repairService.calculateDiscountByDay(repair));
     }
+    
 
 
 
