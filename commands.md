@@ -57,7 +57,7 @@ Docker build -t user/imagename .
 Docker push user/imagename
 ```
 
-### It's working?
+### Is it working?
 ```sh
 kubectl get pods
 ```
