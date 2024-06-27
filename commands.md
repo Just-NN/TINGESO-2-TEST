@@ -41,6 +41,13 @@ kubectl apply -f frontend-deployment-service.yaml
 ### Deletions
 
 ```sh
+kubectl delete -f config-server-deployment-service.yaml
+kubectl delete -f eureka-server-deployment-service.yaml
+kubectl delete -f gateway-server-deployment-service.yaml
+
+```
+
+```sh
 kubectl delete -f ms-vehicles-deployment-service.yaml
 kubectl delete -f ms-tickets-deployment-service.yaml
 kubectl delete -f ms-repairs-deployment-service.yaml

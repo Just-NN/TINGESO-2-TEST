@@ -44,7 +44,7 @@ spring:
 spec:
   type: NodePort
   selector:
-    app: gateway
+    app: gateway-server
   ports:
     - protocol: TCP
       port: 8080
