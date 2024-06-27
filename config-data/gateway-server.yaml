@@ -1,11 +1,13 @@
 server:
   port: 8080
+
 eureka:
   client:
     fetch-registry: true
     register-with-eureka: true
     service-url:
       defaultZone: http://eureka-server-service:8761/eureka/
+
 spring:
   cloud:
     gateway:
@@ -39,4 +41,12 @@ spring:
           predicates:
             - Path=/api/v1/bonusBrand/**
 
-
+spec:
+  type: NodePort
+  selector:
+    app: gateway
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30080 # Puerto externo estático
