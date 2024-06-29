@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://gateway-server-service/api/v1/bonusBrand';
+const API_URL = 'http://localhost:8080/api/v1/bonusBrand';
 
 function getBonusBrandById(id) {
     return axios.get(`${API_URL}/${id}`);

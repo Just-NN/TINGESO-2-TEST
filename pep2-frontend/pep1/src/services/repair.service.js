@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://gateway-server-service/api/v1/repair';
+const API_URL = 'http://localhost:8080/api/v1/repair';
 
 function getRepairById(id) {
     return axios.get(`${API_URL}/${id}`);

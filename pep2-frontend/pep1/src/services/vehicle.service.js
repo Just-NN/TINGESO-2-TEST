@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://gateway-server-service/api/v1/vehicle';
+const API_URL = 'http://localhost:8080/api/v1/vehicle';
 
 function saveVehicle(data) {
     return axios.post(API_URL+"/", data);

@@ -133,6 +133,15 @@ public class TicketController {
         return ResponseEntity.ok(ticketService.saveBonusBrand(ticket));
     }
     //------------------------------------------------------------------------------------------------------------
+    // Get repair types
+    @GetMapping("/repairTypes/{id}")
+    public ResponseEntity<List<Integer>> getRepairTypes(@PathVariable Long id){
+        List<Integer> repairTypes = ticketService.getTypeOfRepairs(id);
+        if (repairTypes == null || repairTypes.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(repairTypes);
+    }
     // Initialization for the ticket
     @PutMapping(value = "/init", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<TicketEntity> saveInit(@RequestBody TicketEntity ticket){

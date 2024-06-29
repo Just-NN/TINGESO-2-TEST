@@ -41,12 +41,4 @@ spring:
           predicates:
             - Path=/api/v1/bonusBrand/**
 
-spec:
-  type: NodePort
-  selector:
-    app: gateway-server-service
-  ports:
-    - protocol: TCP
-      port: 8080
-      targetPort: 8080
-      nodePort: 30666 # Puerto externo estático
+

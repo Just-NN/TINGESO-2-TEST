@@ -70,6 +70,44 @@ public class TicketService {
 
     //------------------------------------------------------------------------------------------------------------
 
+    // Save the type of repair for each repair linked to my ticket
+    public TicketEntity saveTypeOfRepairs(TicketEntity ticket){
+        if (ticket == null) {
+            // Handle the case where ticket is null
+            return null;
+        }
+
+        Long ticketId = ticket.getIdTicket();
+        System.out.println("Ticket ID: " + ticketId);
+
+        // Use ParameterizedTypeReference for type safety and RestTemplate.exchange for the GET request
+        ResponseEntity<List<Repair>> response = restTemplate.exchange(
+                "http://gateway-server-service/api/v1/repair/byticket/" + ticketId,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Repair>>() {}
+        );
+        List<Repair> repairs = response.getBody();
+        System.out.println("Repairs: " + repairs.size());
+
+        List<Integer> typeOfRepairs = new ArrayList<>();
+        for (Repair repair : repairs) {
+            // add the type of repairs to my list
+            typeOfRepairs.add(repair.getRepairType());
+        }
+        ticket.setTypeOfRepairs(typeOfRepairs);
+        return ticketRepository.save(ticket);
+    }
+    // get the type of repairs for a ticket
+    public List<Integer> getTypeOfRepairs(Long ticketId){
+        TicketEntity ticket = ticketRepository.findById(ticketId).orElse(null);
+        if (ticket == null) {
+            return null;
+        }
+        return ticket.getTypeOfRepairs();
+    }
+
+
     //Operations
     // Save base price
     public TicketEntity saveBasePrice(TicketEntity ticket){
@@ -332,6 +370,7 @@ public class TicketService {
             System.out.println("Ticket is null");
             return null;
         }
+        ticket = saveTypeOfRepairs(ticket);
         ticket = saveBasePrice(ticket);
         ticket = saveKMSurcharge(ticket);
         System.out.println("testeando saving todo");

@@ -17,6 +17,7 @@
         <module name="eureka-server" />
         <module name="ms-vehicles" />
         <module name="ms-orders" />
+        <module name="ms-reports" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
@@ -32,6 +33,7 @@
       <module name="ms-bonusbrands" options="-parameters" />
       <module name="ms-orders" options="-parameters" />
       <module name="ms-repairs" options="-parameters" />
+      <module name="ms-reports" options="-parameters" />
       <module name="ms-tickets" options="-parameters" />
       <module name="ms-vehicles" options="-parameters" />
       <module name="repairs" options="-parameters" />
