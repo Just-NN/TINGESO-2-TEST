@@ -485,5 +485,10 @@ public class TicketService {
     }
 
 
+    // HU 5: Show info from repairs per type of vehicles
+    // I need to get the amount of repairs per type of vehicle using rest template requests
+
+
+
 
 }

@@ -19,4 +19,5 @@ public interface TicketRepository extends JpaRepository<TicketEntity, Long> {
     List<TicketEntity> findTicketsByVehicleThisYear(@Param("licensePlate") Long licensePlate, @Param("date") Date date);
 
 
+
 }
