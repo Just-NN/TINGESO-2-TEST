@@ -130,6 +130,17 @@ public class RepairController {
     public ResponseEntity<Integer> calculateDiscountByDay(@RequestBody RepairEntity repair){
         return ResponseEntity.ok(repairService.calculateDiscountByDay(repair));
     }
+
+    // HU5 Controllers
+    @GetMapping("/repairs/totalPrice/{idTicket}/{repairType}")
+    public int getTotalFromAType(@PathVariable Long idTicket, @PathVariable int repairType) {
+        return repairService.getTotalFromAType(idTicket, repairType);
+    }
+
+    @GetMapping("/repairs/count/{idTicket}/{repairType}")
+    public int getCountFromAType(@PathVariable Long idTicket, @PathVariable int repairType) {
+        return repairService.getCountFromAType(idTicket, repairType);
+    }
     
 
 

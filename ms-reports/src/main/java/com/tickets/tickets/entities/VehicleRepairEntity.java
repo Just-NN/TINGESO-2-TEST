@@ -21,7 +21,6 @@ public class VehicleRepairEntity {
     // This entity represents the repair row of data and
     // there are 12 types, not more nor less
 
-    private int vehicleType;
 
     // 5 types of vehicles
     // Amount of repairs per type of vehicle

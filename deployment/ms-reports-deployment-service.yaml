@@ -1,0 +1,49 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-reports-deployment
+  labels:
+    app: ms-reports-deployment
+spec:
+  selector:
+    matchLabels:
+      app: ms-reports-deployment
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: ms-reports-deployment
+    spec:
+      containers:
+        - name: ms-reports
+          image: ivanguajardo13/ms-reports-pep2
+          ports:
+            - containerPort: 8099
+          env:
+            - name: SERVER_PORT
+              value: "0"
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_HOST_REPORTS
+            - name: DB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_PORT_REPORTS
+            - name: DB_DBNAME
+              valueFrom:
+                configMapKeyRef:
+                  name: postgres-config-map
+                  key: DB_DBNAME_REPORTS
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_USER_REPORTS
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: postgres-credentials
+                  key: DB_PASSWORD_REPORTS

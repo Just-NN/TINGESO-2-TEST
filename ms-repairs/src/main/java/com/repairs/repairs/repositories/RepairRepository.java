@@ -11,6 +11,10 @@ import java.util.List;
 public interface RepairRepository extends JpaRepository<RepairEntity, Long>{
     List<RepairEntity> findRepairsByIdTicket(Long id);
     RepairEntity findFirstByIdTicket(Long id);
+    // Custom query that takes a ticket id and a repair type and returns all repairs of that type for that ticket
+    @Query("SELECT r FROM RepairEntity r WHERE r.idTicket = :idTicket AND r.repairType = :repairType")
+    List<RepairEntity> findRepairsByIdTicketAndRepairType(@Param("idTicket") Long idTicket, @Param("repairType") int repairType);
+
 
 
 //    @Query("SELECT r FROM RepairEntity r WHERE r.licensePlate = :licensePlate AND r.entryDate >= :date")

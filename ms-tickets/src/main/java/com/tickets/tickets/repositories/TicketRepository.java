@@ -18,6 +18,9 @@ public interface TicketRepository extends JpaRepository<TicketEntity, Long> {
     @Query("SELECT t FROM TicketEntity t WHERE t.licensePlate = :licensePlate AND t.pickupDate >= :date")
     List<TicketEntity> findTicketsByVehicleThisYear(@Param("licensePlate") Long licensePlate, @Param("date") Date date);
 
+    // Custom query to get all the tickets filtered by vehicletype
+    @Query("SELECT t FROM TicketEntity t WHERE t.vehicleType = :vehicleType")
+    List<TicketEntity> findTicketsByVehicleType(@Param("vehicleType") int vehicleType);
 
 
 }

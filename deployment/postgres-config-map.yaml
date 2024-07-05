@@ -17,3 +17,5 @@ data:
   DB_HOST_BONUS: bonus-db-service
   DB_PORT_BONUS: "5435"
   DB_DBNAME_BONUS: bonus
+  DB_HOST_REPORTS: reports-db-service
+  DB_PORT_REPORTS: "5436"

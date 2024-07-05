@@ -488,6 +488,46 @@ public class TicketService {
     // HU 5: Show info from repairs per type of vehicles
     // I need to get the amount of repairs per type of vehicle using rest template requests
 
+    public List<Integer> getTotalFromAType(int vehicleType, int repairType){
+        List<TicketEntity> tickets = ticketRepository.findTicketsByVehicleType(vehicleType);
+        List<Integer> result = new ArrayList<>();
+        result.add(vehicleType);
+        result.add(repairType);
+        int totalPrice = 0;
+        int totalCount = 0;
+        if (tickets == null) {
+            result.add(0);
+            result.add(0);
+            return result;
+        }
+        for (TicketEntity ticket : tickets) {
+            Long ticketId = ticket.getIdTicket();
+            if (ticketId != null) {
+                ResponseEntity<Integer> response = restTemplate.exchange(
+                        "http://gateway-server-service/api/v1/repair/totalPrice/" + ticketId + "/" + repairType,
+                        HttpMethod.GET,
+                        null,
+                        Integer.class
+                );
+                totalPrice += response.getBody();
+                totalCount++;
+            }
+        }
+        result.add(totalCount);
+        result.add(totalPrice);
+        return result;
+    }
+    // I need to use getTotalFromAType to get the values for each type of vehicle, the values are between 0 and 11
+    public List<List<Integer>> getTotalFromAllTypes(){
+        List<List<Integer>> result = new ArrayList<>();
+        for (int i = 0; i <= 4; i++) {
+            for (int j = 1; j <= 11; j++) {
+                result.add(getTotalFromAType(i, j));
+            }
+
+        }
+        return result;
+    }
 
 
 

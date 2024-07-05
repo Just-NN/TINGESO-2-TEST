@@ -173,6 +173,32 @@ public class RepairService {
         repairRepository.save(repair);
         return basePrice;
     }
+    // Using a ticket id and a repair type, get all repairs of that type for that ticket and then calculate the total price and the count of repairs of that type
+    public List<RepairEntity> getRepairsByIdTicketAndRepairType(Long idTicket, int repairType){
+        List<RepairEntity> repairs = repairRepository.findRepairsByIdTicketAndRepairType(idTicket, repairType);
+        for (RepairEntity repair : repairs) {
+            calculateTotalPrice(repair);
+        }
+        return repairs;
+    }
+    // using getRepairsByIdTicketAndRepairType calculate the total price and the count of repairs of that type
+    public int getTotalFromAType(Long idTicket, int repairType){
+        List<RepairEntity> repairs = repairRepository.findRepairsByIdTicketAndRepairType(idTicket, repairType);
+        // i just need to get the total price
+        int totalPrice = 0;
+        for (RepairEntity repair : repairs) {
+            totalPrice += repair.getTotalPrice();
+        }
+
+        return totalPrice;
+    }
+    // idem but with the count
+    public int getCountFromAType(Long idTicket, int repairType){
+        List<RepairEntity> repairs = repairRepository.findRepairsByIdTicketAndRepairType(idTicket, repairType);
+        return repairs.size();
+    }
+
+
 
 
 

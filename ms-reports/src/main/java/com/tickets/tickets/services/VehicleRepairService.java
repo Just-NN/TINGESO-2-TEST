@@ -42,16 +42,10 @@ public class VehicleRepairService {
         }
         return null;
     }
-
-    // Some calculations
-    // get data from ms-tickets
-    public List<VehicleRepairEntity> getVehicleRepairs(){
-        // get all the tickets using restTemplate
-        List<Ticket> tickets = restTemplate.getForObject("http://gateway-server-service/api/v1/ticket/", List.class);
-        // get all the vehicle repairs per ticket
-        for (Ticket ticket : tickets) {
-
-        }
+    public void deleteAllVehicleRepairs(){
+        vehicleRepairRepository.deleteAll();
     }
+
+
 
 }

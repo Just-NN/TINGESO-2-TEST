@@ -176,5 +176,11 @@ public class TicketController {
         return ResponseEntity.ok(vehicle);
     }
 
+    // HU 5 Controller
+    @GetMapping("/repairs/totalFromAllTypes")
+    public List<List<Integer>> getTotalFromAllTypes() {
+        return ticketService.getTotalFromAllTypes();
+    }
+
 
 }
