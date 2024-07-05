@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: reports-db-pv
+  name: repairs-db-pv
   labels:
     type: local
 spec:
@@ -11,12 +11,12 @@ spec:
   accessModes:
     - ReadWriteOnce
   hostPath:
-    path: "/data/reports-db-data"
+    path: "/data/repairs-db-data"
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: reports-db-pvc
+  name: repairs-db-pvc
   labels:
     app: postgres
     tier: database
@@ -31,24 +31,24 @@ spec:
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: reports-db-deployment
+  name: repairs-db-deployment
   labels:
-    app: reports-db-deployment
+    app: repairs-db-deployment
     tier: database
 spec:
   selector:
     matchLabels:
-      app: reports-db-deployment
+      app: repairs-db-deployment
   strategy:
     type: Recreate
   template:
     metadata:
       labels:
-        app: reports-db-deployment
+        app: repairs-db-deployment
         tier: database
     spec:
       containers:
-        - name: reports-db
+        - name: repairs-db
           image: postgres
           imagePullPolicy: "IfNotPresent"
           ports:
@@ -58,33 +58,33 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: DB_USER_REPORTS
+                  key: DB_USER_TICKETS
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: DB_PASSWORD_REPORTS
+                  key: DB_PASSWORD_TICKETS
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
-              name: reports-db-data
+              name: repairs-db-data
       volumes:
-        - name: reports-db-data
+        - name: repairs-db-data
           persistentVolumeClaim:
-            claimName: reports-db-pvc
+            claimName: repairs-db-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: reports-db-service
+  name: repairs-db-service
   labels:
-    app: reports-db-service
+    app: repairs-db-service
     tier: database
 spec:
   ports:
-    - port: 5439
+    - port: 5434
       targetPort: 5432
       protocol: TCP
   selector:
-    app: reports-db-deployment
+    app: repairs-db-deployment
     tier: database
   type: LoadBalancer
