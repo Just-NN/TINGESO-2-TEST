@@ -18,6 +18,7 @@ kubectl apply -f vehicles-db-deployment-service.yaml
 kubectl apply -f tickets-db-deployment-service.yaml
 kubectl apply -f repairs-db-deployment-service.yaml
 kubectl apply -f bonus-db-deployment-service.yaml
+kubectl apply -f reports-db-deployment-service.yaml
 ```
 
 ```sh
@@ -35,6 +36,7 @@ kubectl apply -f ms-tickets-deployment-service.yaml
 kubectl apply -f ms-repairs-deployment-service.yaml
 kubectl apply -f ms-vehicles-deployment-service.yaml
 kubectl apply -f ms-bonus-deployment-service.yaml
+kubectl apply -f ms-reports-deployment-service.yaml
 
 kubectl apply -f frontend-deployment-service.yaml
 ```
@@ -52,6 +54,7 @@ kubectl delete -f ms-vehicles-deployment-service.yaml
 kubectl delete -f ms-tickets-deployment-service.yaml
 kubectl delete -f ms-repairs-deployment-service.yaml
 kubectl delete -f ms-bonus-deployment-service.yaml
+kubectl delete -f ms-reports-deployment-service.yaml
 kubectl delete -f frontend-deployment-service.yaml
 ```
 

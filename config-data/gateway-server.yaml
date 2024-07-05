@@ -40,5 +40,9 @@ spring:
           uri: lb://ms-bonus
           predicates:
             - Path=/api/v1/bonusBrand/**
+        - id: ms-reports
+          uri: lb://ms-reports
+          predicates:
+            - Path=/api/v1/reports/**
 
 
