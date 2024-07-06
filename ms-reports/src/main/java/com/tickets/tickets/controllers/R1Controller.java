@@ -1,3 +1,5 @@
+package com.tickets.tickets.controllers;
+
 import com.tickets.tickets.entities.R1Entity;
 import com.tickets.tickets.services.R1Service;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -18,7 +18,7 @@ spec:
         - name: ms-reports
           image: ivanguajardo13/ms-reports-pep2
           ports:
-            - containerPort: 8099
+            - containerPort: 8090
           env:
             - name: SERVER_PORT
               value: "0"

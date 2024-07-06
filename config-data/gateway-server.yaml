@@ -43,6 +43,7 @@ spring:
         - id: ms-reports
           uri: lb://ms-reports
           predicates:
-            - Path=/api/v1/reports/**
+            - Path=/api/v1/r1/**
+            - Path=/api/v1/r2/**
 
 

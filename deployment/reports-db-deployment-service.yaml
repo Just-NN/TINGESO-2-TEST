@@ -58,12 +58,12 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: DB_USER_TICKETS
+                  key: DB_USER_REPORTS
             - name: POSTGRES_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: postgres-credentials
-                  key: DB_PASSWORD_TICKETS
+                  key: DB_PASSWORD_REPORTS
           volumeMounts:
             - mountPath: /var/lib/postgresql/data
               name: reports-db-data
@@ -81,7 +81,7 @@ metadata:
     tier: database
 spec:
   ports:
-    - port: 5434
+    - port: 5439
       targetPort: 5432
       protocol: TCP
   selector:
