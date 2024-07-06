@@ -27,7 +27,7 @@ public class InternalCalculationR1Service {
 
 
     public List<Long> calculateR1(){
-        String url = "http://gateway-server-service/api/v1/repair/totalFromAllTypes";
+        String url = "http://gateway-server-service:8080/api/v1/repair/totalFromAllTypes";
         ResponseEntity<List<List<Integer>>> response = restTemplate.exchange(
                 url,
                 HttpMethod.GET,

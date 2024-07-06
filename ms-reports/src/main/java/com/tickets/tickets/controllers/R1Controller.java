@@ -7,11 +7,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/r1")
+@RequestMapping("api/v1/r1")
 public class R1Controller {
 
     @Autowired
-    private R1Service r1Service;
+    R1Service r1Service;
 
     @GetMapping("/{id}")
     public ResponseEntity<R1Entity> getR1ById(@PathVariable Long id) {
@@ -55,6 +55,13 @@ public class R1Controller {
     @PostMapping("/initialize")
     public ResponseEntity<Void> initializeValues() {
         r1Service.initializeValues();
+        return ResponseEntity.ok().build();
+    }
+
+    // post empty
+    @PostMapping("/empty")
+    public ResponseEntity<Void> createEmptyR1() {
+        r1Service.createEmptyR1();
         return ResponseEntity.ok().build();
     }
 }

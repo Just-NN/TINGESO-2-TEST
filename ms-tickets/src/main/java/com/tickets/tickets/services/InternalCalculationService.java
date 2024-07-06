@@ -7,8 +7,11 @@ import com.tickets.tickets.repositories.TicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.text.DecimalFormat;
@@ -44,7 +47,7 @@ public class InternalCalculationService {
         // Get the license plate from the ticket
         Long licensePlate = ticket.getLicensePlate();
 
-        Vehicle vehicle = restTemplate.getForObject("http://gateway-server-service/api/v1/vehicle/" + licensePlate, Vehicle.class);
+        Vehicle vehicle = restTemplate.getForObject("http://gateway-server-service:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
         if (vehicle == null) {
             return -1;
         }
@@ -93,7 +96,7 @@ public class InternalCalculationService {
             return -1;
         }
         Long licensePlate = ticket.getLicensePlate();
-        Vehicle vehicle = restTemplate.getForObject("http://gateway-server-service/api/v1/vehicle/" + licensePlate, Vehicle.class);
+        Vehicle vehicle = restTemplate.getForObject("http://gateway-server-service:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
         System.out.println("-----------------------");
         System.out.println("Vehicle: " + vehicle);
         if (vehicle == null) {
@@ -173,18 +176,31 @@ public class InternalCalculationService {
         for (TicketEntity t : tickets) {
             System.out.println("Ticket: " + t);
             System.out.println("VOY A PROBAR SUERTE");
-            ResponseEntity<List<Repair>> response = restTemplate.exchange(
-                    "http://gateway-server-service/api/v1/repair/byticket/" + t.getIdTicket(),
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<Repair>>() {}
-            );
-            List<Repair> repairs = response.getBody();
-            if (repairs == null) {
-                return -1;
+            System.out.println("ticket id: " + t.getIdTicket());
+            try {
+                ResponseEntity<List<Repair>> response = restTemplate.exchange(
+                        "http://gateway-server-service:8080/api/v1/repair/byticket/" + t.getIdTicket(),
+                        HttpMethod.GET,
+                        null,
+                        new ParameterizedTypeReference<List<Repair>>() {}
+                );
+                List<Repair> repairs = response.getBody();
+                if (repairs != null) {
+                    // get the size of the list and add it to repairQuantity
+                    repairQuantity += repairs.size();
+                } else {
+                    System.out.println("No repairs found for ticket ID: " + t.getIdTicket());
+                }
+            } catch (HttpClientErrorException e) {
+                if (e.getStatusCode() == HttpStatus.NOT_FOUND) {
+                    System.out.println("No repairs found for ticket ID: " + t.getIdTicket() + ". Endpoint returned 404 Not Found.");
+                } else {
+                    System.out.println("HttpClientErrorException: " + e.getMessage());
+                }
+            } catch (RestClientException e) {
+                System.out.println("RestClientException: " + e.getMessage());
+                // Depending on the application's requirements, you might want to handle or log the exception differently.
             }
-            // get the size of the list and add it to repairQuantity
-            repairQuantity += repairs.size();
         }
         return repairQuantity;
     }
@@ -195,7 +211,7 @@ public class InternalCalculationService {
             return -1;
         }
         Long licensePlate = ticket.getLicensePlate();
-        Vehicle vehicle = restTemplate.getForObject("http://gateway-server-service/api/v1/vehicle/" + licensePlate, Vehicle.class);
+        Vehicle vehicle = restTemplate.getForObject("http://gateway-server-service:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
         System.out.println("Vehicle: " + vehicle);
         if (vehicle == null) {
             return -1;

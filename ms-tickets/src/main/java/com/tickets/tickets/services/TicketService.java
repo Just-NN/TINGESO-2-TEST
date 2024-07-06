@@ -82,7 +82,7 @@ public class TicketService {
 
         // Use ParameterizedTypeReference for type safety and RestTemplate.exchange for the GET request
         ResponseEntity<List<Repair>> response = restTemplate.exchange(
-                "http://gateway-server-service/api/v1/repair/byticket/" + ticketId,
+                "http://gateway-server-service:8080/api/v1/repair/byticket/" + ticketId,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<Repair>>() {}
@@ -122,14 +122,14 @@ public class TicketService {
         // Use ParameterizedTypeReference for type safety and RestTemplate.exchange for the GET request
         System.out.println("ESTOY HACIENDO LA REQUEST");
         ResponseEntity<List<Repair>> response = restTemplate.exchange(
-                "http://gateway-server-service/api/v1/repair/byticket/" + ticketId,
+                "http://gateway-server-service:8080/api/v1/repair/byticket/" + ticketId,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<Repair>>() {}
         );
         List<Repair> repairs = response.getBody();
         System.out.println("ESTA ES LA LICENCIA: "+ ticket.getLicensePlate());
-        int engineType = restTemplate.getForObject("http://gateway-server-service/api/v1/vehicle/engineType/" + ticket.getLicensePlate(), Integer.class);
+        int engineType = restTemplate.getForObject("http://gateway-server-service:8080/api/v1/vehicle/engineType/" + ticket.getLicensePlate(), Integer.class);
         System.out.println("Engine type: " + engineType);
         System.out.println("Repairs: " + repairs.size());
 
@@ -144,10 +144,10 @@ public class TicketService {
             basePriceRequest.setEngineType(engineType);
             System.out.println("Base price request: " + basePriceRequest.getEngineType());
             System.out.println("Base price request: " + basePriceRequest.getRepair());
-            restTemplate.put("http://gateway-server-service/api/v1/repair/setBasePrice", basePriceRequest);
+            restTemplate.put("http://gateway-server-service:8080/api/v1/repair/setBasePrice", basePriceRequest);
             // Fetch the updated Repair object
             ResponseEntity<Repair> updatedRepairResponse = restTemplate.exchange(
-                    "http://gateway-server-service/api/v1/repair/" + repair.getIdRepair(),
+                    "http://gateway-server-service:8080/api/v1/repair/" + repair.getIdRepair(),
                     HttpMethod.GET,
                     null,
                     new ParameterizedTypeReference<Repair>() {}
@@ -171,7 +171,7 @@ public class TicketService {
         double percentageKMSurcharge = internalCalculationService.calculateSurchargeForKM(ticket);
 
         ResponseEntity<List<Repair>> response = restTemplate.exchange(
-                "http://gateway-server-service/api/v1/repair/byticket/" + ticketId,
+                "http://gateway-server-service:8080/api/v1/repair/byticket/" + ticketId,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<Repair>>() {}
@@ -181,8 +181,8 @@ public class TicketService {
         double totalKMSurcharge = 0;
 
         for (Repair repair : repairs) {
-            restTemplate.put("http://gateway-server-service/api/v1/repair/calculateKMSurcharge/" + percentageKMSurcharge, repair);
-            Repair updatedRepair = restTemplate.getForObject("http://gateway-server-service/api/v1/repair/" + repair.getIdRepair(), Repair.class);
+            restTemplate.put("http://gateway-server-service:8080/api/v1/repair/calculateKMSurcharge/" + percentageKMSurcharge, repair);
+            Repair updatedRepair = restTemplate.getForObject("http://gateway-server-service:8080/api/v1/repair/" + repair.getIdRepair(), Repair.class);
             int kmSurcharge = updatedRepair.getKmSurcharge();
             totalKMSurcharge += kmSurcharge;
         }
@@ -200,7 +200,7 @@ public class TicketService {
         double percentageAgeSurcharge = internalCalculationService.calculateSurchargeByAge(ticket);
 
         ResponseEntity<List<Repair>> response = restTemplate.exchange(
-                "http://gateway-server-service/api/v1/repair/byticket/" + ticketId,
+                "http://gateway-server-service:8080/api/v1/repair/byticket/" + ticketId,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<Repair>>() {}
@@ -210,8 +210,8 @@ public class TicketService {
         int totalAgeSurcharge = 0;
 
         for (Repair repair : repairs) {
-            restTemplate.put("http://gateway-server-service/api/v1/repair/calculateAgeSurcharge/" + percentageAgeSurcharge, repair);
-            Repair updatedRepair = restTemplate.getForObject("http://gateway-server-service/api/v1/repair/" + repair.getIdRepair(), Repair.class);
+            restTemplate.put("http://gateway-server-service:8080/api/v1/repair/calculateAgeSurcharge/" + percentageAgeSurcharge, repair);
+            Repair updatedRepair = restTemplate.getForObject("http://gateway-server-service:8080/api/v1/repair/" + repair.getIdRepair(), Repair.class);
             int ageSurcharge = updatedRepair.getAgeSurcharge();
             totalAgeSurcharge += ageSurcharge;
         }
@@ -231,7 +231,7 @@ public class TicketService {
 
         // Use ParameterizedTypeReference for type safety and RestTemplate.exchange for the GET request
         ResponseEntity<List<Repair>> response = restTemplate.exchange(
-                "http://gateway-server-service/api/v1/repair/byticket/" + ticketId,
+                "http://gateway-server-service:8080/api/v1/repair/byticket/" + ticketId,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<Repair>>() {}
@@ -247,11 +247,11 @@ public class TicketService {
         for (Repair repair : repairs) {
             System.out.println("REPAIR: " + repair.toString());
             System.out.println("ENTRÓ AL FOR");
-            restTemplate.put("http://gateway-server-service/api/v1/repair/calculateDelaySurcharge/" + percentageDelaySurcharge, repair);
+            restTemplate.put("http://gateway-server-service:8080/api/v1/repair/calculateDelaySurcharge/" + percentageDelaySurcharge, repair);
             // Fetch the updated Repair object
             System.out.println("PASÓ EL PUT");
             ResponseEntity<Repair> updatedRepairResponse = restTemplate.exchange(
-                                "http://gateway-server-service/api/v1/repair/" + repair.getIdRepair(),
+                                "http://gateway-server-service:8080/api/v1/repair/" + repair.getIdRepair(),
                                 HttpMethod.GET,
                                 null,
                                 new ParameterizedTypeReference<Repair>() {}
@@ -276,7 +276,7 @@ public class TicketService {
 
         Long ticketId = ticket.getIdTicket();
         ResponseEntity<List<Repair>> response = restTemplate.exchange(
-                "http://gateway-server-service/api/v1/repair/byticket/" + ticketId,
+                "http://gateway-server-service:8080/api/v1/repair/byticket/" + ticketId,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<Repair>>() {}
@@ -298,7 +298,7 @@ public class TicketService {
 
         Long ticketId = ticket.getIdTicket();
         ResponseEntity<List<Repair>> response = restTemplate.exchange(
-                "http://gateway-server-service/api/v1/repair/byticket/" + ticketId,
+                "http://gateway-server-service:8080/api/v1/repair/byticket/" + ticketId,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<Repair>>() {}
@@ -310,8 +310,8 @@ public class TicketService {
 
         for (Repair repair : repairs) {
             System.out.println("Repair: " + repair.toString());
-            restTemplate.put("http://gateway-server-service/api/v1/repair/calculateDiscountByDay", repair);
-            Repair updatedRepair = restTemplate.getForObject("http://gateway-server-service/api/v1/repair/" + repair.getIdRepair(), Repair.class);
+            restTemplate.put("http://gateway-server-service:8080/api/v1/repair/calculateDiscountByDay", repair);
+            Repair updatedRepair = restTemplate.getForObject("http://gateway-server-service:8080/api/v1/repair/" + repair.getIdRepair(), Repair.class);
             if (updatedRepair != null) {
                 totalDiscountByDay += updatedRepair.getDayDiscount();
             }
@@ -320,29 +320,34 @@ public class TicketService {
         ticket.setDiscountPerDay(discountByDay);
         return ticketRepository.save(ticket);
     }
-    public TicketEntity saveBonusBrand(TicketEntity ticket){
+    public TicketEntity saveBonusBrand(TicketEntity ticket) {
         if (ticket == null) {
+            System.out.println("Ticket is null");
             return null;
         }
         Long licensePlate = ticket.getLicensePlate();
-        Vehicle vehicle = restTemplate.getForObject("http://gateway-server-service/api/v1/vehicle/" + licensePlate, Vehicle.class);
-        if (vehicle == null) {
-            return null;
+        try {
+            Vehicle vehicle = restTemplate.getForObject("http://gateway-server-service:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
+            if (vehicle == null) {
+                System.out.println("Vehicle not found for license plate: " + licensePlate);
+                return null;
+            }
+            String brand = vehicle.getBrand();
+            HttpHeaders headers = new HttpHeaders();
+            UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://gateway-server-service:8080/api/v1/bonusBrand/highestActive/" + brand + "/" + ticket.getIdTicket());
+            ResponseEntity<Integer> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, new HttpEntity<>(headers), Integer.class);
+            Integer bonus = response.getBody();
+            if (bonus == null || bonus == 0) {
+                System.out.println("No bonus found for brand: " + brand);
+                return null;
+            }
+            ticket.setBrandBonus(bonus);
+            return ticketRepository.save(ticket);
+        } catch (Exception e) {
+            System.out.println("Error fetching bonus brand for ticket: " + ticket.getIdTicket() + " - " + e.getMessage());
+            ticket.setBrandBonus(0);
+            return ticketRepository.save(ticket);
         }
-        String brand = vehicle.getBrand();
-        HttpHeaders headers = new HttpHeaders();
-        HttpEntity<?> entity = new HttpEntity<>(headers);
-
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl("http://gateway-server-service/api/v1/bonusBrand/highestActive/" + brand + "/" + ticket.getIdTicket());
-
-        ResponseEntity<Integer> response = restTemplate.exchange(builder.toUriString(), HttpMethod.GET, entity, Integer.class);
-
-        Integer bonus = response.getBody();
-        if (bonus == null || bonus == 0) {
-            return null;
-        }
-        ticket.setBrandBonus(bonus);
-        return ticketRepository.save(ticket);
     }
 
     public TicketEntity saveTotalPrice(TicketEntity ticket){
@@ -350,7 +355,7 @@ public class TicketService {
             return null;
         }
         ResponseEntity<List<Repair>> response = restTemplate.exchange(
-                "http://gateway-server-service/api/v1/repair/byticket/" + ticket.getIdTicket(),
+                "http://gateway-server-service:8080/api/v1/repair/byticket/" + ticket.getIdTicket(),
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<Repair>>() {}
@@ -394,7 +399,7 @@ public class TicketService {
             return;
         }
         Long licensePlate = ticket.getLicensePlate();
-        Vehicle vehicle = restTemplate.getForObject("http://gateway-server-service/api/v1/vehicle/" + licensePlate, Vehicle.class);
+        Vehicle vehicle = restTemplate.getForObject("http://gateway-server-service:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
         if (vehicle == null) {
             System.out.println("Vehicle is null");
             return;
@@ -416,7 +421,7 @@ public class TicketService {
         }
         Long ticketId = ticket.getIdTicket();
         ResponseEntity<List<Repair>> response = restTemplate.exchange(
-                "http://gateway-server-service/api/v1/repair/byticket/" + ticketId,
+                "http://gateway-server-service:8080/api/v1/repair/byticket/" + ticketId,
                 HttpMethod.GET,
                 null,
                 new ParameterizedTypeReference<List<Repair>>() {}
@@ -438,27 +443,27 @@ public class TicketService {
 
             // Calculate KM Surcharge
             totalSurcharges += restTemplate.exchange(
-                    "http://gateway-server-service/api/v1/repair/calculateKMSurcharge/" + percentage,
+                    "http://gateway-server-service:8080/api/v1/repair/calculateKMSurcharge/" + percentage,
                     HttpMethod.PUT, requestEntity, Integer.class).getBody();
 
             // Calculate Age Surcharge
             totalSurcharges += restTemplate.exchange(
-                    "http://gateway-server-service/api/v1/repair/calculateAgeSurcharge/" + percentage,
+                    "http://gateway-server-service:8080/api/v1/repair/calculateAgeSurcharge/" + percentage,
                     HttpMethod.PUT, requestEntity, Integer.class).getBody();
 
             // Calculate Delay Surcharge
             totalSurcharges += restTemplate.exchange(
-                    "http://gateway-server-service/api/v1/repair/calculateDelaySurcharge/" + percentage,
+                    "http://gateway-server-service:8080/api/v1/repair/calculateDelaySurcharge/" + percentage,
                     HttpMethod.PUT, requestEntity, Integer.class).getBody();
 
             // Calculate Repairs Discount
             totalSurcharges -= restTemplate.exchange(
-                    "http://gateway-server-service/api/v1/repair/calculateRepairsDiscount/" + percentage,
+                    "http://gateway-server-service:8080/api/v1/repair/calculateRepairsDiscount/" + percentage,
                     HttpMethod.PUT, requestEntity, Integer.class).getBody();
 
             // Calculate Day Discount
             totalSurcharges -= restTemplate.exchange(
-                    "http://gateway-server-service/api/v1/repair/calculateDayDiscount/" + percentage,
+                    "http://gateway-server-service:8080/api/v1/repair/calculateDayDiscount/" + percentage,
                     HttpMethod.PUT, requestEntity, Integer.class).getBody();
 
             subTotal += repair.getBasePrice() + totalSurcharges;
@@ -481,7 +486,7 @@ public class TicketService {
     }
 
     public Vehicle getVehicleByLicensePlate(Long licensePlate){
-        return restTemplate.getForObject("http://gateway-server-service/api/v1/vehicle/" + licensePlate, Vehicle.class);
+        return restTemplate.getForObject("http://gateway-server-service:8080/api/v1/vehicle/" + licensePlate, Vehicle.class);
     }
 
 
@@ -504,7 +509,7 @@ public class TicketService {
             Long ticketId = ticket.getIdTicket();
             if (ticketId != null) {
                 ResponseEntity<Integer> response = restTemplate.exchange(
-                        "http://gateway-server-service/api/v1/repair/totalPrice/" + ticketId + "/" + repairType,
+                        "http://gateway-server-service:8080/api/v1/repair/totalPrice/" + ticketId + "/" + repairType,
                         HttpMethod.GET,
                         null,
                         Integer.class

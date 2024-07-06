@@ -55,4 +55,11 @@ public class R1Service {
         }
         saveR1(r1Entity);
     }
+
+    // create empty R1Entity and save it
+    public void createEmptyR1(){
+        R1Entity r1Entity = new R1Entity();
+        System.out.println("Creating empty R1Entity");
+        saveR1(r1Entity);
+    }
 }

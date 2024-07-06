@@ -166,6 +166,7 @@ public class TicketController {
         return ResponseEntity.ok(ticket);
     }
 
+    // This is a resttemplate test controller
     @GetMapping("/getVehicle/{id}")
     public ResponseEntity<Vehicle> getVehicleData(@PathVariable Long id){
         Vehicle vehicle = ticketService.getVehicleByLicensePlate(id);
