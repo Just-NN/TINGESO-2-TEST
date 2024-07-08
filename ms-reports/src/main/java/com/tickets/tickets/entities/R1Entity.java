@@ -23,4 +23,9 @@ public class R1Entity {
     @ElementCollection
     private List<Long> vehicleRepairIds;
 
+    // a setter that initializes the list of vehicleRepairIds
+    public void setVehicleRepairIdsEmpty(List<Long> vehicleRepairIds) {
+        this.vehicleRepairIds = vehicleRepairIds;
+    }
+
 }

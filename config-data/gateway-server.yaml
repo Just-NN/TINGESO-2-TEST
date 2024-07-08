@@ -44,6 +44,6 @@ spring:
           uri: lb://ms-reports
           predicates:
             - Path=/api/v1/r1/**
-            
+
 
 

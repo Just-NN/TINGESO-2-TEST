@@ -1,10 +1,12 @@
 package com.tickets.tickets.services;
 
 import com.tickets.tickets.entities.R1Entity;
+import com.tickets.tickets.entities.VehicleRepairEntity;
 import com.tickets.tickets.repositories.R1Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -14,6 +16,8 @@ public class R1Service {
     R1Repository r1Repository;
     @Autowired
     InternalCalculationR1Service internalCalculationR1Service;
+    @Autowired
+    VehicleRepairService vehicleRepairService;
 
     // Crud
     public R1Entity getR1ById(Long id){
@@ -43,23 +47,45 @@ public class R1Service {
     }
 
     // Initialize the values
-    public void initializeValues(){
-        R1Entity r1Entity = new R1Entity();
+    public void initializeValues(R1Entity r1Entity){
+        System.out.println("Initializing values");
+        System.out.println("Calculating R1");
         List<Long> values = internalCalculationR1Service.calculateR1();
+        System.out.println("Values: " + values.toString());
         if (values == null){
+            System.out.println("Values are null in initializeValues");
             return;
         }
-        for (int i = 0; i < values.size(); i++){
-            r1Entity.setVehicleRepairIds(values);
-            r1Repository.save(r1Entity);
-        }
+        r1Entity.setVehicleRepairIds(values);
+        saveR1(r1Entity);
+        System.out.println("Values initialized");
         saveR1(r1Entity);
     }
 
     // create empty R1Entity and save it
     public void createEmptyR1(){
         R1Entity r1Entity = new R1Entity();
+        r1Entity.setIdR1(1L);
+        //empty list in repair ids
+        r1Entity.setVehicleRepairIdsEmpty(List.of());
         System.out.println("Creating empty R1Entity");
+        System.out.println(r1Entity.toString());
         saveR1(r1Entity);
     }
+    // get all the repairs in the r1 - the content using each id from 0 to 11
+    public List<VehicleRepairEntity> getVehicleRepairIds(Long id){
+        R1Entity r1Entity = getR1ById(id);
+        List<VehicleRepairEntity> vehicleRepairs = new ArrayList<>();
+        if (r1Entity == null){
+            return null;
+        }
+        for (int i = 0; i < 12; i++){
+            VehicleRepairEntity vehicleRepair = vehicleRepairService.getVehicleRepairById(r1Entity.getVehicleRepairIds().get(i));
+            if (vehicleRepair != null){
+                vehicleRepairs.add(vehicleRepair);
+            }
+        }
+        return vehicleRepairs;
+    }
+
 }

@@ -52,9 +52,16 @@ public class R1Controller {
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/initialize")
-    public ResponseEntity<Void> initializeValues() {
-        r1Service.initializeValues();
+    @PutMapping("/init/{id}")
+    public ResponseEntity<Void> initializeValues(@PathVariable Long id) {
+        System.out.println("Initializing values - controller");
+        R1Entity r1Entity = r1Service.getR1ById(id);
+        if (r1Entity == null) {
+            System.out.println("R1 entity is null");
+            return ResponseEntity.badRequest().build();
+        }
+        System.out.println("Initializing values - calling the service");
+        r1Service.initializeValues(r1Entity);
         return ResponseEntity.ok().build();
     }
 
@@ -63,5 +70,12 @@ public class R1Controller {
     public ResponseEntity<Void> createEmptyR1() {
         r1Service.createEmptyR1();
         return ResponseEntity.ok().build();
+    }
+
+    //------------------------------------------------------------------------------------------------------------
+    // get all the vehicle repairs
+    @GetMapping("/repairs/{id}")
+    public ResponseEntity<?> getVehicleRepairs(@PathVariable Long id) {
+        return ResponseEntity.ok(r1Service.getVehicleRepairIds(id));
     }
 }

@@ -132,12 +132,12 @@ public class RepairController {
     }
 
     // HU5 Controllers
-    @GetMapping("/repairs/totalPrice/{idTicket}/{repairType}")
+    @GetMapping("/totalPrice/{idTicket}/{repairType}")
     public int getTotalFromAType(@PathVariable Long idTicket, @PathVariable int repairType) {
         return repairService.getTotalFromAType(idTicket, repairType);
     }
 
-    @GetMapping("/repairs/count/{idTicket}/{repairType}")
+    @GetMapping("/count/{idTicket}/{repairType}")
     public int getCountFromAType(@PathVariable Long idTicket, @PathVariable int repairType) {
         return repairService.getCountFromAType(idTicket, repairType);
     }

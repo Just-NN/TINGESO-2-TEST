@@ -17,8 +17,7 @@ public class VehicleRepairService {
     @Autowired
     VehicleRepairRepository vehicleRepairRepository;
 
-    @Autowired
-    InternalCalculationR1Service internalCalculationR1Service;
+
 
     // Basic CRUD operations
     public VehicleRepairEntity getVehicleRepairById(Long id){
@@ -44,6 +43,26 @@ public class VehicleRepairService {
     }
     public void deleteAllVehicleRepairs(){
         vehicleRepairRepository.deleteAll();
+    }
+
+    // Reset the values of the vehicle repairs
+    public void resetValues(){
+        List<VehicleRepairEntity> vehicleRepairs = vehicleRepairRepository.findAllVehicleRepairs();
+        for (VehicleRepairEntity vehicleRepair : vehicleRepairs){
+            vehicleRepair.setSedanAmount(0);
+            vehicleRepair.setHatchbackAmount(0);
+            vehicleRepair.setSuvAmount(0);
+            vehicleRepair.setPickupAmount(0);
+            vehicleRepair.setTruckAmount(0);
+            vehicleRepair.setSedanPrice(0);
+            vehicleRepair.setHatchbackPrice(0);
+            vehicleRepair.setSuvPrice(0);
+            vehicleRepair.setPickupPrice(0);
+            vehicleRepair.setTruckPrice(0);
+            vehicleRepair.setTotalAmount(0);
+            vehicleRepair.setTotalPrice(0);
+            updateVehicleRepair(vehicleRepair);
+        }
     }
 
 

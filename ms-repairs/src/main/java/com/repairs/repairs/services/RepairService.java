@@ -108,6 +108,7 @@ public class RepairService {
     // dayDiscount;
     public int calculateDayDiscount(RepairEntity repair, double percentage){
         int dayDiscount = (int) (repair.getBasePrice() * percentage);
+        System.out.println("Day discount: " + dayDiscount);
         repair.setDayDiscount(dayDiscount);
         repairRepository.save(repair);
         return dayDiscount;
@@ -195,6 +196,7 @@ public class RepairService {
     // idem but with the count
     public int getCountFromAType(Long idTicket, int repairType){
         List<RepairEntity> repairs = repairRepository.findRepairsByIdTicketAndRepairType(idTicket, repairType);
+        System.out.println("Repairs: " + repairs.size());
         return repairs.size();
     }
 
