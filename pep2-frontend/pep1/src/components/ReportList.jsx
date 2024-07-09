@@ -1,44 +1,51 @@
 import { useEffect, useState } from 'react';
-import reportService from '../services/report.service';
+import r1Service from '../services/r1.service.js';
 import NavBar from "./NavBar.jsx";
 import './theme.css';
 
 const ReportList = () => {
     const [report, setReport] = useState(null);
+    const [vehicleRepairs, setVehicleRepairs] = useState([]);
 
     const fetchReport = () => {
-        reportService.getReportById(1) // Changed from 1 to 2
+        r1Service.getR1ById(1) // Assuming the report ID is known and static
             .then(response => {
                 setReport(response.data);
+                fetchVehicleRepairs(); // Fetch vehicle repairs after successfully fetching the report
             })
             .catch(error => {
                 console.error('There was an error!', error);
             });
-    }
+    };
 
-    const updateReport = () => {
-        const updatedReport = {...report, updated: true}; // Added new property
-        console.log(updatedReport)
-        reportService.updateReport(updatedReport)
-            .then(response => {
-                setReport(response.data);
-                window.location.reload(); // Add this line to reload the page
-            })
-            .catch(error => {
-                console.error('There was an error!', error);
-            });
-    }
+    const fetchVehicleRepairs = async () => {
+        try {
+            const response = await r1Service.getVehicleRepairs(1); // Always use ID 1
+            console.log('Response for ID 1:', response.data); // Debugging log
+            if (response.data) {
+                setVehicleRepairs(response.data); // Assuming response.data is the list of repairs
+            } else {
+                console.log('No data returned for ID 1'); // Debugging log for empty responses
+                setVehicleRepairs([]); // Set to empty if no data returned
+            }
+        } catch (error) {
+            console.error('There was an error fetching the vehicle repair data for ID 1', error);
+            setVehicleRepairs([]); // Set to empty in case of error
+        }
+    };
 
-    const saveInitReport = () => {
-        reportService.saveInit(report)
-            .then(response => {
-                console.log('Initial save successful', response);
-                setReport(response.data); // Update the state with the response data
+    const initializeVehicleRepairs = () => {
+        console.log('Initializing vehicle repairs...')
+        const fixedId = 1; // Always use ID 1
+        r1Service.initializeValues(fixedId)
+            .then(() => {
+                console.log('Initialization successful!');
+                fetchVehicleRepairs(); // Re-fetch vehicle repairs after initialization
             })
             .catch(error => {
-                console.error('There was an error!', error);
+                console.error('There was an error during initialization!', error);
             });
-    }
+    };
 
     useEffect(() => {
         fetchReport();
@@ -49,82 +56,50 @@ const ReportList = () => {
     }
 
     return (
-        <div className='option-body'>
+        <div>
             <NavBar></NavBar>
-            <h1>Report Details</h1>
-
-            <button className="reload-button" onClick={updateReport}>Update Report</button>
-            <button className="reload-button" onClick={saveInitReport}>Save Initial Report</button>
-
-            <table className="report-table">
+            <h1>Report List</h1>
+            <button onClick={initializeVehicleRepairs}>Initialize Vehicle Repairs</button>
+            <table className="repair-table">
                 <thead>
                 <tr>
-                    <th>ID Report</th>
-                    <th>R1 Details</th>
+                    <th>Repair Type</th>
+                    <th>Sedan Amount</th>
+                    <th>Hatchback Amount</th>
+                    <th>SUV Amount</th>
+                    <th>Pickup Amount</th>
+                    <th>Truck Amount</th>
+                    <th>Sedan Price</th>
+                    <th>Hatchback Price</th>
+                    <th>SUV Price</th>
+                    <th>Pickup Price</th>
+                    <th>Truck Price</th>
+                    <th>Total Amount</th>
+                    <th>Total Price</th>
                 </tr>
                 </thead>
                 <tbody>
-                {report.r1Details.split('\n').map((detail, index) => (
+                {vehicleRepairs.map((repair, index) => (
                     <tr key={index}>
-                        <td>{report.idReport}</td>
-                        {detail.split(',').map((item, i) => <td key={i}>{item}</td>)}
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-
-            <table className="report-table">
-                <thead>
-                <tr>
-                    <th>ID Report</th>
-                    <th>R2 Repairs Vs Vehicles By Total Type</th>
-                </tr>
-                </thead>
-                <tbody>
-                {report.r2RepairsVsVehiclesByTotalType.split('\n').map((detail, index) => (
-                    <tr key={index}>
-                        <td>{report.idReport}</td>
-                        {detail.split(',').map((item, i) => <td key={i}>{item}</td>)}
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-
-            <table className="report-table">
-                <thead>
-                <tr>
-                    <th>ID Report</th>
-                    <th>R3 Average By Brand</th>
-                </tr>
-                </thead>
-                <tbody>
-                {report.r3AverageByBrand.split(',').map((detail, index) => (
-                    <tr key={index}>
-                        <td>{report.idReport}</td>
-                        <td>{detail}</td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
-
-            <table className="report-table">
-                <thead>
-                <tr>
-                    <th>ID Report</th>
-                    <th>R4 Repairs Vs Vehicles By Total Engine</th>
-                </tr>
-                </thead>
-                <tbody>
-                {report.r4RepairsVsVehiclesByTotalEngine.split('\n').map((detail, index) => (
-                    <tr key={index}>
-                        <td>{report.idReport}</td>
-                        {detail.split(',').map((item, i) => <td key={i}>{item}</td>)}
+                        <td>{repair.repairType}</td>
+                        <td>{repair.sedanAmount}</td>
+                        <td>{repair.hatchbackAmount}</td>
+                        <td>{repair.suvAmount}</td>
+                        <td>{repair.pickupAmount}</td>
+                        <td>{repair.truckAmount}</td>
+                        <td>{repair.sedanPrice}</td>
+                        <td>{repair.hatchbackPrice}</td>
+                        <td>{repair.suvPrice}</td>
+                        <td>{repair.pickupPrice}</td>
+                        <td>{repair.truckPrice}</td>
+                        <td>{repair.totalAmount}</td>
+                        <td>{repair.totalPrice}</td>
                     </tr>
                 ))}
                 </tbody>
             </table>
         </div>
-    )
+    );
 }
 
 export default ReportList;

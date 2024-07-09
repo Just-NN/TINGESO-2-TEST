@@ -53,6 +53,8 @@ public class InternalCalculationR1Service {
             System.out.println("Repairs are null");
             return null;
         }
+        int totalAmount = 0;
+        int totalPrice = 0;
         for (List<Integer> repair : repairs){
             System.out.println("Repair: " + repair.toString());
             // Must look what repair type is and then what vehicle type is
@@ -65,6 +67,8 @@ public class InternalCalculationR1Service {
             int vehicleType = repair.get(0);
             int amount = repair.get(2);
             int price = repair.get(3);
+            totalAmount += amount;
+            totalPrice += price;
             System.out.println("* Vehicle type: " + vehicleType);
             System.out.println("* Amount: " + amount);
             System.out.println("* Price: " + price);
@@ -91,7 +95,7 @@ public class InternalCalculationR1Service {
     private void setVehicleTypeValues(VehicleRepairEntity vehicleRepairEntity, int vehicleType, int amount, int price) {
         int amountPrev;
         int pricePrev;
-        switch (vehicleType) { // Assuming the first element is the vehicle type
+        switch (vehicleType-1) { // Assuming the first element is the vehicle type
             case 0: // Sedan
                 System.out.println("Es un sedan");
                 amountPrev = vehicleRepairEntity.getSedanAmount();

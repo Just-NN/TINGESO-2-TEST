@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import NavBar from "./NavBar.jsx";
 import './theme.css';
-import reportService from "../services/report.service.js";
+import r1Service from "../services/r1.service.js";
 
 const Reports = () => {
     const navigate = useNavigate();
@@ -11,12 +11,12 @@ const Reports = () => {
     }
 
     const updateReport = () => {
-        reportService.getReportById(1) // Fetch the report with idReport = 1
+        r1.getReportById(1) // Fetch the report with idReport = 1
             .then(response => {
                 const report = response.data;
                 const updatedReport = {...report, updated: true}; // Update the report
                 console.log(updatedReport)
-                reportService.updateReport(updatedReport) // Save the updated report
+                r1Service.updateReport(updatedReport) // Save the updated report
                     .then(response => {
                         console.log('Update Success:', response.data);
                         window.location.reload(); // Add this line to reload the page
@@ -33,10 +33,10 @@ const Reports = () => {
     const createNullReport = () => {
         const report = {
             idreport: 1,
-            // other report properties set to null
+            vehicleRepairIds: []
         };
 
-        reportService.saveReport(report)
+        r1.saveReport(report)
             .then(response => {
                 console.log('Success:', response.data);
             })
