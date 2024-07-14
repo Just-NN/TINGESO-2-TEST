@@ -15,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -584,6 +586,79 @@ public class TicketService {
         }
         return result;
     }
+
+    // HU 6: Calculate the amount and price of each repair type per month
+    // in the previous 2 months and the current month
+
+    // First of all, i need a service to get all the ids of the tickets in a given month
+    public List<Long> getTicketsByMonth(Date month, Date year){
+        List<TicketEntity> tickets = ticketRepository.findTicketsByMonth(month, year);
+        if (tickets == null) {
+            return new ArrayList<>();
+        }
+        List<Long> ticketIds = new ArrayList<>();
+        for (TicketEntity ticket : tickets) {
+            ticketIds.add(ticket.getIdTicket());
+        }
+        return ticketIds;
+    }
+
+    // Then, i need a service to get the amount using a ticket id and a repair type
+    public int getTotalPriceByMonth(Long ticketId, int repairType){
+        ResponseEntity<Integer> response = restTemplate.exchange(
+                "http://gateway-server-service:8080/api/v1/repair/totalPrice/" + ticketId + "/" + repairType,
+                HttpMethod.GET,
+                null,
+                Integer.class
+        );
+        if (response.getBody() == null) {
+            return 0;
+        }
+        return response.getBody();
+    }
+
+    // Then, i need a service to get the amount using a ticket id and a repair type
+    public int getTotalCountByMonth(Long ticketId, int repairType){
+        ResponseEntity<Integer> response = restTemplate.exchange(
+                "http://gateway-server-service:8080/api/v1/repair/count/" + ticketId + "/" + repairType,
+                HttpMethod.GET,
+                null,
+                Integer.class
+        );
+        if (response.getBody() == null) {
+            return 0;
+        }
+        return response.getBody();
+    }
+    // Finally, i need a service to get the values for each repair type in a given month and its previous 2 months
+    public List<List<Integer>> getValuesByMonth(Date month, Date year) {
+        List<Long> ticketIds = getTicketsByMonth(month, year);
+        List<List<Integer>> result = new ArrayList<>();
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MM"); // Format to extract month as a number
+
+        for (Long ticketId : ticketIds) {
+            TicketEntity ticket = ticketRepository.findById(ticketId).orElse(null);
+            if (ticket != null) {
+                String ticketMonth = monthFormat.format(ticket.getPickupDate()); // Extract month as a string
+                int monthInt = Integer.parseInt(ticketMonth); // Convert month string to integer
+
+                for (int i = 1; i <= 11; i++) {
+                    List<Integer> values = new ArrayList<>();
+                    values.add(i); // repair type
+                    values.add(getTotalCountByMonth(ticketId, i)); // amount
+                    values.add(getTotalPriceByMonth(ticketId, i)); // price
+                    values.add(monthInt); // month
+                    result.add(values);
+                }
+            }
+        }
+        // result = [[repairType, amount, price, month]]
+        return result;
+    }
+
+
+
+
 
 
 

@@ -15,6 +15,7 @@ public interface RepairRepository extends JpaRepository<RepairEntity, Long>{
     @Query("SELECT r FROM RepairEntity r WHERE r.idTicket = :idTicket AND r.repairType = :repairType")
     List<RepairEntity> findRepairsByIdTicketAndRepairType(@Param("idTicket") Long idTicket, @Param("repairType") int repairType);
 
+    // Custom Query that
 
 
 //    @Query("SELECT r FROM RepairEntity r WHERE r.licensePlate = :licensePlate AND r.entryDate >= :date")

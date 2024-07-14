@@ -61,7 +61,7 @@ public class R1Controller {
             return ResponseEntity.badRequest().build();
         }
         System.out.println("Initializing values - calling the service");
-        r1Service.initializeValues(r1Entity);
+        r1Service.initializeValuesR1(r1Entity);
         return ResponseEntity.ok().build();
     }
 

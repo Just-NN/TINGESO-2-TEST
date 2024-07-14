@@ -28,4 +28,9 @@ public class R1Entity {
         this.vehicleRepairIds = vehicleRepairIds;
     }
 
+    // I'll add the second report here with other list bc
+    // it isn't necessary to create a new entity for it
+    @ElementCollection
+    private List<Long> monthRepairIds;
+
 }

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import com.tickets.tickets.entities.TicketEntity;
 import com.tickets.tickets.services.TicketService;
 
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -184,4 +185,9 @@ public class TicketController {
     }
 
 
+    // HU 6 Controller - Get count and price per months
+    @GetMapping("/repairs/totalFromAllTypesPerMonth")
+    public List<List<Integer>> getValesByMonth(@RequestBody Date month, @RequestBody Date year) {
+        return ticketService.getValuesByMonth(month, year);
+    }
 }

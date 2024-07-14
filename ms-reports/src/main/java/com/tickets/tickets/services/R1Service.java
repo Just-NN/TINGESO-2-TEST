@@ -1,5 +1,6 @@
 package com.tickets.tickets.services;
 
+import com.tickets.tickets.entities.MonthRepairEntity;
 import com.tickets.tickets.entities.R1Entity;
 import com.tickets.tickets.entities.VehicleRepairEntity;
 import com.tickets.tickets.repositories.R1Repository;
@@ -17,7 +18,11 @@ public class R1Service {
     @Autowired
     InternalCalculationR1Service internalCalculationR1Service;
     @Autowired
+    InternalCalculationR2Service internalCalculationR2Service;
+    @Autowired
     VehicleRepairService vehicleRepairService;
+    @Autowired
+    MonthRepairService monthRepairService;
 
     // Crud
     public R1Entity getR1ById(Long id){
@@ -47,20 +52,27 @@ public class R1Service {
     }
 
     // Initialize the values
-    public void initializeValues(R1Entity r1Entity){
+    public void initializeValuesR1(R1Entity r1Entity){
         System.out.println("Initializing values");
         System.out.println("Calculating R1");
         List<Long> values = internalCalculationR1Service.calculateR1();
+        List<Long> values2 = internalCalculationR2Service.calculateR2();
         System.out.println("Values: " + values.toString());
         if (values == null){
             System.out.println("Values are null in initializeValues");
             return;
         }
+        if (values2 == null){
+            System.out.println("Values2 are null in initializeValues");
+            return;
+        }
         r1Entity.setVehicleRepairIds(values);
+        r1Entity.setMonthRepairIds(values2);
         saveR1(r1Entity);
         System.out.println("Values initialized");
         saveR1(r1Entity);
     }
+
 
     // create empty R1Entity and save it
     public void createEmptyR1(){
@@ -86,6 +98,21 @@ public class R1Service {
             }
         }
         return vehicleRepairs;
+    }
+    // get all the month repairs in the r1 - the content using each id from 0 to 11
+    public List<MonthRepairEntity> getMonthRepairIds(Long id){
+        R1Entity r1Entity = getR1ById(id);
+        List<MonthRepairEntity> monthRepairs = new ArrayList<>();
+        if (r1Entity == null){
+            return null;
+        }
+        for (int i = 0; i < 12; i++){
+            MonthRepairEntity monthRepairEntity = monthRepairService.getMonthRepairById(r1Entity.getMonthRepairIds().get(i));
+            if (monthRepairEntity != null){
+                monthRepairs.add(monthRepairEntity);
+            }
+        }
+        return monthRepairs;
     }
 
 }
