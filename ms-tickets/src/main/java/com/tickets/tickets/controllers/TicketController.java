@@ -2,6 +2,7 @@ package com.tickets.tickets.controllers;
 
 import com.tickets.tickets.models.Vehicle;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import com.tickets.tickets.entities.TicketEntity;
 import com.tickets.tickets.services.TicketService;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 
@@ -186,8 +190,13 @@ public class TicketController {
 
 
     // HU 6 Controller - Get count and price per months
-    @GetMapping("/repairs/totalFromAllTypesPerMonth")
-    public List<List<Integer>> getValesByMonth(@RequestBody Date month, @RequestBody Date year) {
-        return ticketService.getValuesByMonth(month, year);
+    @GetMapping("/repairs/totalFromAllTypesPerMonth/{month}/{year}")
+    public ResponseEntity<List<List<Integer>>> getValuesByMonthController(@PathVariable int month, @PathVariable int year){
+        List<List<Integer>> values = ticketService.getValuesByThreeMonths(month, year);
+        if (values.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        }
+        return ResponseEntity.ok(values);
     }
+
 }

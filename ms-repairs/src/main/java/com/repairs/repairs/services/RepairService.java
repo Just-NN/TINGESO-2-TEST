@@ -126,17 +126,14 @@ public class RepairService {
     public int calculateTotalPrice(RepairEntity repair){
         // The total price is the sum of the base price and the surcharges minus the discounts
         int totalPrice = repair.getBasePrice() + repair.getKmSurcharge() + repair.getAgeSurcharge() + repair.getDelaySurcharge() - repair.getDayDiscount() - repair.getRepairsDiscount();
+        System.out.println("Total price: " + totalPrice);
+        System.out.println("Calculation: " + repair.getBasePrice() + " + " + repair.getKmSurcharge() + " + " + repair.getAgeSurcharge() + " + " + repair.getDelaySurcharge() + " - " + repair.getDayDiscount() + " - " + repair.getRepairsDiscount());
         repair.setTotalPrice(totalPrice);
         repairRepository.save(repair);
         return totalPrice;
     }
 
-    public int calculateDiscountByDay(RepairEntity repair){
-        int discountByDay = repair.getBasePrice() * (repair.getDayDiscount());
-        repair.setDayDiscount(discountByDay);
-        repairRepository.save(repair);
-        return discountByDay;
-    }
+
 
     //    basePrice;
     public int calculateBasePrice(RepairEntity repair, int engineType){

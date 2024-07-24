@@ -126,9 +126,9 @@ public class RepairController {
     public ResponseEntity<Integer> calculateTotalPrice(@RequestBody RepairEntity repair){
         return ResponseEntity.ok(repairService.calculateTotalPrice(repair));
     }
-    @PutMapping("/calculateDiscountByDay")
-    public ResponseEntity<Integer> calculateDiscountByDay(@RequestBody RepairEntity repair){
-        return ResponseEntity.ok(repairService.calculateDiscountByDay(repair));
+    @PutMapping("/calculateDiscountByDay/{percentage}")
+    public ResponseEntity<Integer> calculateDiscountByDay(@RequestBody RepairEntity repair , @PathVariable double percentage){
+        return ResponseEntity.ok(repairService.calculateDayDiscount(repair, percentage));
     }
 
     // HU5 Controllers

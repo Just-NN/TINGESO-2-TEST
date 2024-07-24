@@ -6,6 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
+
 @RestController
 @RequestMapping("api/v1/r1")
 public class R1Controller {
@@ -52,16 +56,18 @@ public class R1Controller {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping("/init/{id}")
-    public ResponseEntity<Void> initializeValues(@PathVariable Long id) {
+    @PutMapping("/init/{id}/{month}/{year}")
+    public ResponseEntity<Void> initializeValues(@PathVariable Long id, @PathVariable int month, @PathVariable int year) {
         System.out.println("Initializing values - controller");
         R1Entity r1Entity = r1Service.getR1ById(id);
         if (r1Entity == null) {
             System.out.println("R1 entity is null");
             return ResponseEntity.badRequest().build();
         }
+        // Create an OffsetDateTime object with the given month and year
+
         System.out.println("Initializing values - calling the service");
-        r1Service.initializeValuesR1(r1Entity);
+        r1Service.initializeValuesR1(r1Entity, month, year);
         return ResponseEntity.ok().build();
     }
 
@@ -77,5 +83,10 @@ public class R1Controller {
     @GetMapping("/repairs/{id}")
     public ResponseEntity<?> getVehicleRepairs(@PathVariable Long id) {
         return ResponseEntity.ok(r1Service.getVehicleRepairIds(id));
+    }
+    // get all the month repairs
+    @GetMapping("/monthRepairs/{id}")
+    public ResponseEntity<?> getMonthRepairs(@PathVariable Long id) {
+        return ResponseEntity.ok(r1Service.getMonthRepairIds(id));
     }
 }

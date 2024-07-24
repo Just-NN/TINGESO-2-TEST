@@ -7,6 +7,9 @@ import com.tickets.tickets.repositories.R1Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,11 +55,11 @@ public class R1Service {
     }
 
     // Initialize the values
-    public void initializeValuesR1(R1Entity r1Entity){
+    public void initializeValuesR1(R1Entity r1Entity, int month, int year){
         System.out.println("Initializing values");
         System.out.println("Calculating R1");
         List<Long> values = internalCalculationR1Service.calculateR1();
-        List<Long> values2 = internalCalculationR2Service.calculateR2();
+        List<Long> values2 = internalCalculationR2Service.calculateR2(month, year);
         System.out.println("Values: " + values.toString());
         if (values == null){
             System.out.println("Values are null in initializeValues");

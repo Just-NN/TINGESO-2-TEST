@@ -16,7 +16,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -312,7 +316,8 @@ public class TicketService {
 
         for (Repair repair : repairs) {
             System.out.println("Repair: " + repair.toString());
-            restTemplate.put("http://gateway-server-service:8080/api/v1/repair/calculateDiscountByDay", repair);
+            String url = "http://gateway-server-service:8080/api/v1/repair/calculateDiscountByDay/" + discountByDay;
+            restTemplate.put(url, repair);
             Repair updatedRepair = restTemplate.getForObject("http://gateway-server-service:8080/api/v1/repair/" + repair.getIdRepair(), Repair.class);
             if (updatedRepair != null) {
                 totalDiscountByDay += updatedRepair.getDayDiscount();
@@ -631,8 +636,20 @@ public class TicketService {
         return response.getBody();
     }
     // Finally, i need a service to get the values for each repair type in a given month and its previous 2 months
-    public List<List<Integer>> getValuesByMonth(Date month, Date year) {
-        List<Long> ticketIds = getTicketsByMonth(month, year);
+    public List<List<Integer>> getValuesByThreeMonths(int month, int year) {
+        Calendar cal = Calendar.getInstance();
+        // Set to the first day of the given month and year
+        cal.set(year, month - 1, 1); // Month is 0-based in Calendar
+        // Set to the first day of the month, two months back
+        cal.add(Calendar.MONTH, -2);
+        Date startDate = cal.getTime();
+
+        // Move to the given month and year, then to the last day of the month
+        cal.set(year, month - 1, 1); // Reset to the original month and year
+        cal.set(Calendar.DAY_OF_MONTH, cal.getActualMaximum(Calendar.DAY_OF_MONTH));
+        Date endDate = cal.getTime();
+
+        List<Long> ticketIds = getTicketsByMonth(startDate, endDate);
         List<List<Integer>> result = new ArrayList<>();
         SimpleDateFormat monthFormat = new SimpleDateFormat("MM"); // Format to extract month as a number
 
@@ -652,9 +669,9 @@ public class TicketService {
                 }
             }
         }
-        // result = [[repairType, amount, price, month]]
         return result;
     }
+
 
 
 
