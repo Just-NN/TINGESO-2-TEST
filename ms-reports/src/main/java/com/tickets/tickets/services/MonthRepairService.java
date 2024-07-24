@@ -72,7 +72,50 @@ public class MonthRepairService {
             updateMonthRepair(monthRepair);
         }
     }
+    // Now is necessary to calculate the variations between the third month and the first month and the second month
+    public void calculateVariations() {
+        List<MonthRepairEntity> monthRepairs = monthRepairRepository.findAllMonthRepairs();
+        for (MonthRepairEntity monthRepair : monthRepairs) {
+            int firstAmount = monthRepair.getFirstMonthAmount();
+            int secondAmount = monthRepair.getSecondMonthAmount();
+            int thirdAmount = monthRepair.getThirdMonthAmount();
+            int firstPrice = monthRepair.getFirstMonthPrice();
+            int secondPrice = monthRepair.getSecondMonthPrice();
+            int thirdPrice = monthRepair.getThirdMonthPrice();
 
+            Integer firstAmountVariation = null;
+            Integer secondAmountVariation = null;
+            Integer firstPriceVariation = null;
+            Integer secondPriceVariation = null;
 
+            if (firstAmount != 0) {
+                firstAmountVariation = (secondAmount - firstAmount) * 100 / firstAmount;
+            }
+            if (secondAmount != 0) {
+                secondAmountVariation = (thirdAmount - secondAmount) * 100 / secondAmount;
+            }
+            if (firstPrice != 0) {
+                firstPriceVariation = (secondPrice - firstPrice) * 100 / firstPrice;
+            }
+            if (secondPrice != 0) {
+                secondPriceVariation = (thirdPrice - secondPrice) * 100 / secondPrice;
+            }
 
+            if (firstAmountVariation != null) {
+                monthRepair.setFirstAmountVariation(firstAmountVariation);
+            }
+            if (secondAmountVariation != null) {
+                monthRepair.setSecondAmountVariation(secondAmountVariation);
+            }
+            if (firstPriceVariation != null) {
+                monthRepair.setFirstPriceVariation(firstPriceVariation);
+            }
+            if (secondPriceVariation != null) {
+                monthRepair.setSecondPriceVariation(secondPriceVariation);
+            }
+
+            updateMonthRepair(monthRepair);
+        }
+    }
 }
+

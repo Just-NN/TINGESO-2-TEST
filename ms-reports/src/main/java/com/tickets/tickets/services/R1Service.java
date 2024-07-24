@@ -60,6 +60,7 @@ public class R1Service {
         System.out.println("Calculating R1");
         List<Long> values = internalCalculationR1Service.calculateR1();
         List<Long> values2 = internalCalculationR2Service.calculateR2(month, year);
+        monthRepairService.calculateVariations();
         System.out.println("Values: " + values.toString());
         if (values == null){
             System.out.println("Values are null in initializeValues");
