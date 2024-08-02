@@ -62,6 +62,7 @@ public class TicketEntity {
     // Data from vehicle
     private String brand;
     private String model;
+    private int engineType;
     private int vehicleType;
     private int year;
     // Data from repair

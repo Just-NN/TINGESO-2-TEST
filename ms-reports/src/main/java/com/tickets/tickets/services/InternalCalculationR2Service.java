@@ -74,7 +74,7 @@ public class InternalCalculationR2Service {
                 // Must look what repair type is and then what vehicle type is
                 System.out.println("Repair: " + repair);
                 // Look if there's a month repair entity with the same repair type
-                MonthRepairEntity monthRepair = monthRepairRepository.findMonthRepairEntityByRepairType(repair.get(0));
+                MonthRepairEntity monthRepair = monthRepairRepository.findMonthRepairEntitiesByRepairType(repair.get(0)).get(0);
                 System.out.println("FOUND ONE: " + monthRepair);
                 // if not, create a new one
                 if (monthRepair == null) {
@@ -107,7 +107,7 @@ public class InternalCalculationR2Service {
         monthRepairRepository.saveAll(monthRepairs);
         System.out.println("Month repairs saved: " + monthRepairs);
 
-        for (int i = 0; i < 12; i++) {
+        for (int i = 1; i < 13; i++) {
             repairIds.add((long) i);
         }
         System.out.println("Repair ids: " + repairIds);
@@ -116,7 +116,7 @@ public class InternalCalculationR2Service {
 
     private List<MonthRepairEntity> createMonthRepairs() {
         List<MonthRepairEntity> monthRepairs = new ArrayList<>();
-        for (int i = 0; i < 12; i++){
+        for (int i = 1; i < 13; i++){
             MonthRepairEntity monthRepair = new MonthRepairEntity();
             monthRepair.setRepairType(i);
             monthRepairs.add(monthRepair);
@@ -130,8 +130,8 @@ public class InternalCalculationR2Service {
     public List<Integer> sortMonths(int month){
         List<Integer> sortedMonths = new ArrayList<>();
         if (month == 1){
-            sortedMonths.add(10);
-            sortedMonths.add(11);
+            sortedMonths.add(1);
+            sortedMonths.add(12);
             sortedMonths.add(1);
         }
         else {

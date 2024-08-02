@@ -66,20 +66,21 @@ const TicketList = () => {
                 <thead>
                 <tr>
                     <th>ID Ticket</th>
+                    <th>License Plate</th>
                     <th>Brand</th>
                     <th>Model</th>
                     <th>Vehicle Type</th>
                     <th>Year</th>
-                    <th>Total Surcharges</th>
-                    <th>Total Discounts</th>
+                    <th>Motor type</th>
+                    <th>Entry Date</th>
+                    <th>Entry Time</th>
                     <th>Sub Total</th>
+                    <th>Total Discount</th>
                     <th>IVA Value</th>
                     <th>Base Price</th>
                     <th>Total Price</th>
-                    <th>License Plate</th>
-                    <th>Pickup Date</th>
-                    <th>Entry Date</th>
                     <th>Exit Date</th>
+                    <th>Pickup Date</th>
                     <th>Exit Time</th>
                     <th>Pickup Time</th>
                 </tr>
@@ -88,20 +89,21 @@ const TicketList = () => {
                 {tickets.map((ticket, index) => (
                     <tr key={index}>
                         <td>{ticket.idTicket}</td>
+                        <td>{ticket.licensePlate}</td>
                         <td>{ticket.brand}</td>
                         <td>{ticket.model}</td>
                         <td>{ticket.vehicleType}</td>
                         <td>{ticket.year}</td>
-                        <td>{ticket.totalSurcharges}</td>
-                        <td>{ticket.totalDiscounts}</td>
+                        <td>{ticket.engineType}</td>
+                        <td>{format(ticket.entryDate, "yyyy-MM-dd'T'HH:mm")}</td>
+                        <td>{ticket.entryTime}</td>
                         <td>{ticket.subTotal}</td>
+                        <td>{ticket.totalDiscounts}</td>
                         <td>{ticket.ivaValue}</td>
                         <td>{ticket.basePrice}</td>
                         <td>{ticket.totalPrice}</td>
-                        <td>{ticket.licensePlate}</td>
-                        <td>{format(ticket.pickupDate, "yyyy-MM-dd'T'HH:mm")}</td>
-                        <td>{format(ticket.entryDate, "yyyy-MM-dd'T'HH:mm")}</td>
                         <td>{format(ticket.exitDate, "yyyy-MM-dd'T'HH:mm")}</td>
+                        <td>{format(ticket.pickupDate, "yyyy-MM-dd'T'HH:mm")}</td>
                         <td>{ticket.exitTime}</td>
                         <td>{ticket.pickupTime}</td>
                     </tr>

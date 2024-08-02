@@ -163,6 +163,7 @@ public class TicketService {
             totalBasePrice += updatedRepair.getBasePrice();
         }
 
+        ticket.setEngineType(engineType);
         ticket.setBasePrice((int) Math.round(totalBasePrice));
         return ticketRepository.save(ticket);
     }

@@ -59,10 +59,10 @@ const ReportList = () => {
         const date = new Date(`${month}-01`); // Ensure the date is parsed correctly
         const monthInt = date.getMonth();
         if (monthInt === 11) {
-            setMonthInt(0);
+            setMonthInt(1);
             setYearInt(date.getFullYear() + 1);
         } else {
-            setMonthInt(monthInt + 1); // Adjust the month value by adding 1
+            setMonthInt(monthInt + 2); // Adjust the month value by adding 1
             setYearInt(date.getFullYear());
         }
         console.log('Month:', monthInt + 1, 'Year:', date.getFullYear());
