@@ -144,14 +144,36 @@ public class InternalCalculationR1Service {
         }
         return vehicleRepairEntities;
     }
+    // Calculate total amount and total price of all the repairs
+    public void calculateTotalValues() {
+        List<VehicleRepairEntity> vehicleRepairs = vehicleRepairRepository.findAllVehicleRepairs();
 
 
 
 
+        for (VehicleRepairEntity vehicleRepair : vehicleRepairs) {
+            int totalAmount = 0;
+            totalAmount += vehicleRepair.getSedanAmount();
+            totalAmount += vehicleRepair.getHatchbackAmount();
+            totalAmount += vehicleRepair.getSuvAmount();
+            totalAmount += vehicleRepair.getPickupAmount();
+            totalAmount += vehicleRepair.getTruckAmount();
 
+            int totalPrice = 0;
+            totalPrice += vehicleRepair.getSedanPrice();
+            totalPrice += vehicleRepair.getHatchbackPrice();
+            totalPrice += vehicleRepair.getSuvPrice();
+            totalPrice += vehicleRepair.getPickupPrice();
+            totalPrice += vehicleRepair.getTruckPrice();
+            System.out.println("Total Amount: " + totalAmount);
+            System.out.println("Total Price: " + totalPrice);
 
-
-
+            // Set the total amount and total price
+            vehicleRepair.setTotalAmount(totalAmount);
+            vehicleRepair.setTotalPrice(totalPrice);
+            vehicleRepairRepository.save(vehicleRepair);
+        }
+    }
 }
 
 // MUST CREATE THE MICROSERVICES AND CONNECT THEM TO THIS ONE TO GET THE DATA AND WORK WITH IT

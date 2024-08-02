@@ -71,14 +71,18 @@ public class InternalCalculationR2Service {
 
         else{
             for (List<Integer> repair : repairs) {
+                // Must look what repair type is and then what vehicle type is
                 System.out.println("Repair: " + repair);
+                // Look if there's a month repair entity with the same repair type
                 MonthRepairEntity monthRepair = monthRepairRepository.findMonthRepairEntityByRepairType(repair.get(0));
+                System.out.println("FOUND ONE: " + monthRepair);
+                // if not, create a new one
                 if (monthRepair == null) {
                     System.out.println("Month repair is null");
                     monthRepair = new MonthRepairEntity();
                     monthRepair.setRepairType(repair.get(0));
                 }
-
+                // Then get the lists with the same repair type
                 List<List<Integer>> repairLists = seekLists(repairs, repair.get(0));
                 List<Integer> sortedMonths = sortMonths(month);
                 System.out.println("Sorted months: " + sortedMonths);

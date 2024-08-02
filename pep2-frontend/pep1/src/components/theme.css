@@ -1,7 +1,8 @@
 /* theme.css */
 
 body {
-    background-color: #1a1a1a; /* Dark grey background */
+    /* gradient background */
+    background: linear-gradient(to right, rgb(168, 244, 143), rgb(82, 248, 176));
     color: #f5f5f5; /* Light grey text color */
 }
 
@@ -16,8 +17,13 @@ a:hover {
 .navbar {
     background-color: #333; /* Darker grey background for navbar */
     color: #f5f5f5; /* Light grey text color */
+    margin-left: 3vh;
+    margin-right: 3vh;
     border-radius: 10vh;
     width: 100%;
+    margin-bottom: 3vh;
+    font-weight: bold;
+    font-family: 'Lato', sans-serif;
 
 }
 
@@ -42,6 +48,9 @@ a:hover {
 .navbar .navbar-toggler-icon {
     background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' width='30' height='30' fill='%23fff' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(0, 0, 0, 0.5)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e"); /* White hamburger icon */
 }
+.navbar{
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
 .op-button{
     border-radius: 10vh;
 }
@@ -50,6 +59,9 @@ a:hover {
     width: 100%;
     border-collapse: collapse;
     overflow: auto;
+    border-top: 3vh;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+    margin-top: 3vh;
 }
 
 .repair-table th, .repair-table td {
@@ -157,4 +169,46 @@ a:hover {
 
 .update-button:hover {
     background-color: #3e8e41; /* Dark green background on hover */
+}
+.repair-table td{
+    text-align: center;
+    font-weight: bold;
+    font-family: 'Lato', sans-serif;
+}
+h1 {
+    font-family: 'Nunito', sans-serif;
+    font-weight: bold;
+    font-size: 2em; /* Adjust the size as needed */
+}
+h2 {
+    font-family: 'Nunito', sans-serif;
+    font-weight: bold;
+    font-size: 1.5em; /* Adjust the size as needed */
+}
+button {
+    background: linear-gradient(to right, rgb(189, 62, 62), rgb(186, 140, 132));
+    border: none;
+}
+.yearInput {
+    width: 30%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    background: linear-gradient(to right, rgb(166, 62, 189), rgb(32, 188, 243));
+}
+.monthInput {
+    width: 30%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    box-sizing: border-box;
+    background: linear-gradient(to right, rgb(166, 62, 189), rgb(32, 188, 243));
+}
+.date-info{
+    font-family: 'Lato', sans-serif;
+    font-weight: bold;
+    font-size: 1.5em;
 }

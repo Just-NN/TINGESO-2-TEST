@@ -3,7 +3,7 @@ import r1Service from '../services/r1.service.js';
 import NavBar from "./NavBar.jsx";
 import './theme.css';
 
-const ReportList = () => {
+const ReportList2 = () => {
     const [report, setReport] = useState(null);
     const [vehicleRepairs, setVehicleRepairs] = useState([]);
     const [inputValue, setInputValue] = useState(0); // State for number input value
@@ -24,7 +24,7 @@ const ReportList = () => {
 
     const fetchVehicleRepairs = async () => {
         try {
-            const response = await r1Service.getVehicleRepairs(1); // Always use ID 1
+            const response = await r1Service.getMonthRepairs(1); // Always use ID 1
             console.log('Response for ID 1:', response.data); // Debugging log
             if (response.data) {
                 setVehicleRepairs(response.data); // Assuming response.data is the list of repairs
@@ -53,6 +53,11 @@ const ReportList = () => {
                 console.error('There was an error during initialization!', error);
             });
     };
+
+    useEffect(() => {
+        fetchReport();
+    }, []);
+
     const handleMonthChange = (e) => {
         const month = e.target.value;
         setMonthValue(month);
@@ -68,17 +73,13 @@ const ReportList = () => {
         console.log('Month:', monthInt + 1, 'Year:', date.getFullYear());
     };
 
-    useEffect(() => {
-        fetchReport();
-    }, []);
-
     if (!report) {
         return <div>Loading...</div>;
     }
 
     return (
         <div>
-            <NavBar></NavBar>
+            <NavBar />
             <h1>Report List</h1>
             <button onClick={initializeVehicleRepairs}>Initialize Vehicle Repairs</button>
             <input
@@ -88,41 +89,41 @@ const ReportList = () => {
                 placeholder="Enter a month"
                 className="monthInput"
             />
+            <p className='date-info'>Selected Month as Integer: {monthInt !== null ? monthInt : 'None'}</p>
+            <p className='date-info'>Selected Year as Integer: {yearInt !== null ? yearInt : 'None'}</p>
             <table className="repair-table">
                 <thead>
                 <tr>
                     <th>Repair Type</th>
-                    <th>Sedan Amount</th>
-                    <th>Hatchback Amount</th>
-                    <th>SUV Amount</th>
-                    <th>Pickup Amount</th>
-                    <th>Truck Amount</th>
-                    <th>Sedan Price</th>
-                    <th>Hatchback Price</th>
-                    <th>SUV Price</th>
-                    <th>Pickup Price</th>
-                    <th>Truck Price</th>
-                    <th>Total Amount</th>
-                    <th>Total Price</th>
+                    <th>First Month</th>
+                    <th>% Variation</th>
+                    <th>Second Month</th>
+                    <th>% Variation</th>
+                    <th>Third Month</th>
                 </tr>
                 </thead>
                 <tbody>
                 {vehicleRepairs.map((repair, index) => (
-                    <tr key={index}>
-                        <td>{repair.repairType}</td>
-                        <td>{repair.sedanAmount}</td>
-                        <td>{repair.hatchbackAmount}</td>
-                        <td>{repair.suvAmount}</td>
-                        <td>{repair.pickupAmount}</td>
-                        <td>{repair.truckAmount}</td>
-                        <td>{repair.sedanPrice}</td>
-                        <td>{repair.hatchbackPrice}</td>
-                        <td>{repair.suvPrice}</td>
-                        <td>{repair.pickupPrice}</td>
-                        <td>{repair.truckPrice}</td>
-                        <td>{repair.totalAmount}</td>
-                        <td>{repair.totalPrice}</td>
-                    </tr>
+                    <React.Fragment key={index} >
+                        <tr>
+                            <td>{repair.repairType}</td>
+                            <td>{repair.firstMonthAmount}</td>
+                            <td>{repair.firstPriceVariation}%</td>
+                            <td>{repair.secondMonthAmount}</td>
+                            <td>{repair.secondPriceVariation}%</td>
+                            <td>{repair.thirdMonthAmount}</td>
+
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>{repair.firstMonthPrice}</td>
+                            <td>{repair.firstPriceVariation}%</td>
+                            <td>{repair.secondMonthPrice}</td>
+                            <td>{repair.secondPriceVariation}%</td>
+                            <td>{repair.thirdMonthPrice}</td>
+
+                        </tr>
+                    </React.Fragment>
                 ))}
                 </tbody>
             </table>
@@ -130,4 +131,4 @@ const ReportList = () => {
     );
 }
 
-export default ReportList;
+export default ReportList2;

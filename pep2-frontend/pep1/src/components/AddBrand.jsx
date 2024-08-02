@@ -39,7 +39,7 @@ const AddBrandBonus = () => {
         } else {
             brandBonusService.saveBonusBrand(brandBonus).then(() => {
                 console.log("Brand Bonus saved")
-                navigate('/brandBonuses');
+                navigate('/brands/list');
             });
         }
     };

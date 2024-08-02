@@ -9,6 +9,9 @@ const Reports = () => {
     const goToReportList = () => {
         navigate('/reports/1');
     }
+    const goToReportList2 = () => {
+        navigate('/reports/2');
+    }
 
     const updateReport = () => {
         r1.getReportById(1) // Fetch the report with idReport = 1
@@ -54,7 +57,10 @@ const Reports = () => {
                     <div className='option-row'>
                         <div className='option-card'>
                             <button onClick={goToReportList}>
-                                <h3>Go to Report List</h3>
+                                <h3>Go to Report List 1</h3>
+                            </button>
+                            <button onClick={goToReportList2}>
+                                <h3>Go to Report List 2</h3>
                             </button>
                             <button onClick={createNullReport}>
                                 <h3>Create First Report</h3>
